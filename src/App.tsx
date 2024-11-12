@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './Components/LandingPage';
 import Login from './Components/Login';
 import EmployerSignUp from './Components/EmployerSignup';
-// import JobSeekerSignup from './Components/JobSeekerSignup';
+import JobSeekerSignup from './Components/JobSeekerSignup';
 
 const App: React.FC = () => {
   return (
@@ -14,7 +14,7 @@ const App: React.FC = () => {
         <Route path="/job-seeker" element={<div>Job Seeker Page</div>} />
         <Route path="/login" element={<Login />} />
         <Route path="/employer-signup" element={<EmployerSignUp />} />
-        {/* <Route path="/job-signup" element={<JobSeekerSignup />} /> */}
+        <Route path="/job-seeker-signup" element={<JobSeekerSignup />} />
       </Routes>
     </Router>
   );
