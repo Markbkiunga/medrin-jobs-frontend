@@ -16,7 +16,6 @@ const About = () => {
                 </p>
                 <img src="/path/to/team-meeting.jpg" alt="Consulting Team Meeting" className="mx-auto mt-8 rounded-md shadow-lg max-w-md"/>
             </header>
-
             {/* Mission Section */}
             <section className="py-16 px-4 bg-white">
                 <h2 className="text-3xl font-bold text-center mb-10">Our Mission</h2>
