@@ -16,7 +16,7 @@ const LandingPage: React.FC = () => {
           to="/employer"
           className="group w-96 h-20 flex flex-col items-center justify-center rounded-lg transform transition duration-300 hover:scale-105"
         >
-          <button className="text-black bg-white group-hover:text-indigo-500 transition-colors duration-300 mt-2 text-lg text-center px-4">
+          <button className="text-black h-11 bg-white rounded-xl group-hover:text-indigo-500 transition-colors duration-300 mt-2 text-lg text-center px-4">
             Looking for Talent?
           </button>
         </Link>
@@ -25,8 +25,8 @@ const LandingPage: React.FC = () => {
           to="/job-seeker"
           className="group w-96 h-20 flex flex-col items-center justify-center rounded-lg transform transition duration-300 hover:scale-105"
         >
-          <button className="text-black bg-white group-hover:text-indigo-500 transition-colors duration-300 mt-2 text-lg text-center px-4">
-            Looking for a job?
+          <button className="text-black h-11 rounded-xl bg-white group-hover:text-indigo-500 transition-colors duration-300 mt-2 text-lg text-center px-4">
+            <a href="http://localhost:5173/job-seeker-signup">Looking for a job?</a> 
           </button>
         </Link>
       </div>
