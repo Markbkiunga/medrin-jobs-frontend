@@ -22,7 +22,7 @@ const EmployerSignup: React.FC = () => {
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
       {/* Left section */}
-      <div className="lg:w-1/2 bg-blue-500 flex flex-col justify-between items-start p-10 text-white">
+      <div className="lg:w-1/2 bg-blue-500 lg:flex flex-col justify-between items-start p-10 text-white hidden">
         <div className="">
           <img
             src={medrinJobsLogo}
@@ -44,7 +44,7 @@ const EmployerSignup: React.FC = () => {
       </div>
 
       {/* Right section */}
-      <div className="lg:w-1/2 flex flex-col justify-center items-center p-10">
+      <div className="lg:w-1/2 flex flex-col justify-center items-center p-10 h-screen">
         <form
           onSubmit={handleSubmit}
           className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"

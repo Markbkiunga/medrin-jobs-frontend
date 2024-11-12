@@ -20,9 +20,9 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center lg:flex-row h-screen bg-gray-100">
+    <div className="flex flex-col justify-center items-center lg:flex-row h-screen bg-gray-100 p-12">
       {/* Left section with Login Form*/}
-      <div className="grid grid-cols-2  bg-white">
+      <div className="lg:grid grid-cols-2  bg-white">
         <div className="flex flex-col justify-center items-end h-full">
           <form
             onSubmit={handleSubmit}
@@ -103,7 +103,10 @@ const Login: React.FC = () => {
             </button>
             <div className="text-center text-sm text-gray-600 mt-4">
               Don't have an account?{' '}
-              <a href="http://localhost:5173/job-seeker-signup" className="text-red-500 hover:underline">
+              <a
+                href="http://localhost:5173/job-seeker-signup"
+                className="text-red-500 hover:underline"
+              >
                 Sign up
               </a>
             </div>

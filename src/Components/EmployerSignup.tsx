@@ -23,7 +23,7 @@ const EmployerSignup: React.FC = () => {
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-100">
       {/* Left section */}
-      <div className="lg:w-1/2 bg-blue-500 flex flex-col justify-between items-start p-10 text-white">
+      <div className="lg:w-1/2 bg-blue-500 lg:flex flex-col justify-between items-start p-10 text-white hidden ">
         <div className="">
           <img
             src={medrinJobsLogo}
@@ -45,7 +45,7 @@ const EmployerSignup: React.FC = () => {
       </div>
 
       {/* Right section */}
-      <div className="lg:w-1/2 flex flex-col justify-center items-center p-10">
+      <div className="lg:w-1/2 flex flex-col justify-center items-center p-10 h-screen">
         <form
           onSubmit={handleSubmit}
           className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
@@ -133,14 +133,20 @@ const EmployerSignup: React.FC = () => {
           </button>
           <div className="text-center text-sm text-gray-600 mt-4">
             Already have an account?{' '}
-            <a href="http://localhost:5173/login" className="text-blue-500 hover:underline">
+            <a
+              href="http://localhost:5173/login"
+              className="text-blue-500 hover:underline"
+            >
               Log in
             </a>
           </div>
           <div className="text-center text-sm text-gray-600 mt-2">-OR-</div>
           <div className="text-center text-sm text-gray-600 mt-2">
             Are you a job seeker?{' '}
-            <a href="http://localhost:5173/job-seeker-signup" className="text-blue-500 hover:underline">
+            <a
+              href="http://localhost:5173/job-seeker-signup"
+              className="text-blue-500 hover:underline"
+            >
               Sign up for job seeker
             </a>
           </div>
