@@ -6,6 +6,8 @@ import EmployerSignUp from './Components/EmployerSignup';
 import JobSeekerSignup from './Components/JobSeekerSignup';
 import About from './Components/About';
 import PageTitle from './Components/PageTitle';
+import AdminDashboard from './Components/AdminDashboard';
+import DetailedAdminDashboard from './Components/DetailedAdminDashboard';
 
 const App: React.FC = () => {
   return (
@@ -56,15 +58,24 @@ const App: React.FC = () => {
             </>
           }
         />
-        {/* <Route
-          path="/medrin"
+        <Route
+          path="/admin-dashboard"
           element={
             <>
-              <PageTitle title="Landing Page" />
-              <LandingPage />
+              <PageTitle title="Admin Dashboard" />
+              <AdminDashboard />
             </>
           }
-        /> */}
+        />
+        <Route
+          path="/admin-dashboard:type"
+          element={
+            <>
+              <PageTitle title="Detailed Admin Dashboard" />
+              <DetailedAdminDashboard />
+            </>
+          }
+        />
       </Routes>
     </Router>
   );
