@@ -133,14 +133,14 @@ const EmployerSignup: React.FC = () => {
           </button>
           <div className="text-center text-sm text-gray-600 mt-4">
             Already have an account?{' '}
-            <a href="#" className="text-blue-500 hover:underline">
+            <a href="http://localhost:5173/login" className="text-blue-500 hover:underline">
               Log in
             </a>
           </div>
           <div className="text-center text-sm text-gray-600 mt-2">-OR-</div>
           <div className="text-center text-sm text-gray-600 mt-2">
             Are you a job seeker?{' '}
-            <a href="#" className="text-blue-500 hover:underline">
+            <a href="http://localhost:5173/job-seeker-signup" className="text-blue-500 hover:underline">
               Sign up for job seeker
             </a>
           </div>
