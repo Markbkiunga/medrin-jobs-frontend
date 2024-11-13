@@ -68,7 +68,7 @@ const App: React.FC = () => {
           }
         />
         <Route
-          path="/admin-dashboard:type"
+          path="/admin-dashboard/:type"
           element={
             <>
               <PageTitle title="Detailed Admin Dashboard" />
