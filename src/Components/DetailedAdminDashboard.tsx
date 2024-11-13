@@ -116,7 +116,7 @@ const DetailedAdminDashboard: React.FC = () => {
           {filteredItems.map((item) => (
             <div
               key={item.id}
-              className="bg-white p-4 rounded-lg shadow flex justify-between items-center"
+              className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center"
             >
               <div>
                 {editItemId === item.id ? (
