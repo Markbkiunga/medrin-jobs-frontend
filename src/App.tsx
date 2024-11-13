@@ -8,6 +8,7 @@ import About from './Components/About';
 import PageTitle from './Components/PageTitle';
 import AdminDashboard from './Components/AdminDashboard';
 import DetailedAdminDashboard from './Components/DetailedAdminDashboard';
+import Blogs from '../src/Components/Blogs'
 
 const App: React.FC = () => {
   return (
@@ -73,6 +74,15 @@ const App: React.FC = () => {
             <>
               <PageTitle title="Detailed Admin Dashboard" />
               <DetailedAdminDashboard />
+            </>
+          }
+        />
+        <Route
+          path="/blogs"
+          element={
+            <>
+              <PageTitle title="Blogs Page" />
+              <Blogs />
             </>
           }
         />
