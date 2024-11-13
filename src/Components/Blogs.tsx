@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import bookmark from '../assets/bookmark.svg';
 import bookmarked from '../assets/bookmarked.svg';
+import { useNavigate } from 'react-router-dom';
 
 type Blog = {
   id: number;
@@ -66,7 +67,10 @@ const Blogs: React.FC = () => {
   const handleUnsaveBlog = (blogId: number) => {
     setSavedBlogs(savedBlogs.filter((blog) => blog.id !== blogId));
   };
-
+  const navigate = useNavigate();
+  const handleNavigate = (blogId: number) => {
+    navigate(`/blogs/${blogId}`);
+  };
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -118,7 +122,12 @@ const Blogs: React.FC = () => {
                 className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm bg-gray-50"
               >
                 <div className="flex-grow mb-4 md:mb-0">
-                  <h2 className="text-lg font-semibold text-blue-500">
+                  <h2
+                    className="text-lg font-semibold text-blue-500 hover:underline cursor-pointer"
+                    onClick={() => {
+                      handleNavigate(blog.id);
+                    }}
+                  >
                     {blog.name} by {blog.author}
                   </h2>
                   <p className="text-gray-600">{blog.description}</p>
