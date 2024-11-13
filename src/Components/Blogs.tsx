@@ -83,6 +83,12 @@ const Blogs: React.FC = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <button
+          onClick={() => navigate('/write-blog')}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-all duration-300 ease-in-out"
+        >
+          Write a Blog
+        </button>
       </div>
 
       <div className="flex space-x-4 mb-8">
@@ -237,7 +243,7 @@ const Blogs: React.FC = () => {
 
       {currentTab === 'myblogs' && (
         <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-4">My Blogs</h3>
+          {/* <h3 className="text-xl font-semibold mb-4">My Blogs</h3> */}
           <p className="text-gray-500">This section is under construction.</p>
         </div>
       )}

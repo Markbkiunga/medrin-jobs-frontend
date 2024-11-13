@@ -10,6 +10,7 @@ import AdminDashboard from './Components/AdminDashboard';
 import DetailedAdminDashboard from './Components/DetailedAdminDashboard';
 import Blogs from '../src/Components/Blogs';
 import BlogPage from './Components/BlogPage';
+import BlogForm from './Components/BlogForm';
 
 const App: React.FC = () => {
   return (
@@ -93,6 +94,15 @@ const App: React.FC = () => {
             <>
               <PageTitle title="Blog Page" />
               <BlogPage />
+            </>
+          }
+        />
+        <Route
+          path="/write-blog"
+          element={
+            <>
+              <PageTitle title="Write Blog Form" />
+              <BlogForm />
             </>
           }
         />
