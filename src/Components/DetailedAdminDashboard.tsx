@@ -75,6 +75,11 @@ const DetailedAdminDashboard: React.FC = () => {
     }
   };
 
+  const handleEditCancel = () => {
+    setEditItemId(null);
+    setEditedName(''); // Reset edited name
+  };
+
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(
@@ -133,26 +138,33 @@ const DetailedAdminDashboard: React.FC = () => {
               </div>
               <div className="flex space-x-2">
                 {editItemId === item.id ? (
-                  <button
-                    onClick={() => handleEditSave(item.id)}
-                    className="text-green-500"
-                  >
-                    ✅
-                  </button>
+                  <>
+                    <button
+                      onClick={() => handleEditSave(item.id)}
+                      className="text-green-500"
+                    >
+                      ✅
+                    </button>
+                    <button onClick={handleEditCancel} className="text-red-500">
+                      ❌
+                    </button>
+                  </>
                 ) : (
-                  <button
-                    onClick={() => handleEditClick(item.id, item.name)}
-                    className="text-blue-500"
-                  >
-                    ✏️
-                  </button>
+                  <>
+                    <button
+                      onClick={() => handleEditClick(item.id, item.name)}
+                      className="text-blue-500"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="text-red-500"
+                    >
+                      🗑️
+                    </button>
+                  </>
                 )}
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="text-red-500"
-                >
-                  🗑️
-                </button>
               </div>
             </div>
           ))}
