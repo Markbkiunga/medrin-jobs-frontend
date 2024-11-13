@@ -1,6 +1,6 @@
 // BlogPage.tsx
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface Comment {
   id: number;
@@ -27,6 +27,8 @@ const BlogPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
   const [refresh, setRefresh] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -114,13 +116,21 @@ const BlogPage: React.FC = () => {
       console.error('Error liking comment:', error);
     }
   };
-
+  const handleBackClick = () => {
+    navigate('/blogs');
+  };
   if (loading) return <div>Loading...</div>;
 
   if (!blog) return <div>Blog not found</div>;
 
   return (
     <div className="container m-auto px-4 py-8 bg-gray-50">
+      <button
+        onClick={handleBackClick}
+        className="mb-4 px-4 py-2 bg-gray-300 rounded text-black transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-400 hover:shadow-lg"
+      >
+        ← Back to Blogs
+      </button>
       <h1 className="text-4xl font-bold mb-4">{blog.name}</h1>
       <p className="text-gray-500 mb-2">
         By {blog.author} on {blog.posted_at}

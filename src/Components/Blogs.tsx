@@ -145,18 +145,21 @@ const Blogs: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <button
-                  className="text-gray-500 hover:text-gray-700"
-                  onClick={() => handleSaveBlog(blog)}
-                >
+                <button className="text-gray-500 hover:text-gray-700">
                   {savedBlogs.some((savedBlog) => savedBlog.id === blog.id) ? (
                     <img
                       className="w-12"
                       src={bookmarked}
                       alt="bookmarked-icon"
+                      onClick={() => handleUnsaveBlog(blog.id)}
                     />
                   ) : (
-                    <img className="w-12" src={bookmark} alt="bookmark-icon" />
+                    <img
+                      className="w-12"
+                      src={bookmark}
+                      alt="bookmark-icon"
+                      onClick={() => handleSaveBlog(blog)}
+                    />
                   )}
                 </button>
               </div>
@@ -207,18 +210,21 @@ const Blogs: React.FC = () => {
                     Posted: {blog.posted_at}
                   </p>
                 </div>
-                <button
-                  className="text-gray-500 hover:text-gray-700"
-                  onClick={() => handleUnsaveBlog(blog.id)}
-                >
+                <button className="text-gray-500 hover:text-gray-700">
                   {savedBlogs.some((savedBlog) => savedBlog.id === blog.id) ? (
                     <img
                       className="w-12"
                       src={bookmarked}
                       alt="bookmarked-icon"
+                      onClick={() => handleUnsaveBlog(blog.id)}
                     />
                   ) : (
-                    <img className="w-12" src={bookmark} alt="bookmark-icon" />
+                    <img
+                      className="w-12"
+                      src={bookmark}
+                      alt="bookmark-icon"
+                      onClick={() => handleSaveBlog(blog)}
+                    />
                   )}
                 </button>
               </div>
