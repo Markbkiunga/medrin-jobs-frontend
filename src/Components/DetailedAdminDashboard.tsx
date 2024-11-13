@@ -107,7 +107,7 @@ const DetailedAdminDashboard: React.FC = () => {
       <div className="w-full max-w-5xl">
         <input
           type="text"
-          placeholder="Search Item"
+          placeholder={`Search ${type || 'items'}`}
           value={searchQuery}
           onChange={handleSearchChange}
           className="w-full p-2 border border-gray-300 rounded-md mb-4"
