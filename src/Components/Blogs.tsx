@@ -86,7 +86,7 @@ const Blogs: React.FC = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="p-20 bg-gray-50 h-screen">
+    <div className="p-20 bg-gray-50">
       <div className="flex justify-between items-center mb-6">
         <input
           type="text"
@@ -185,7 +185,7 @@ const Blogs: React.FC = () => {
           )}
 
           {/* Pagination Component */}
-          <div className="flex justify-center my-4 items-center text-gray-600">
+          <div className="flex justify-center items-center text-gray-600">
             <button
               onClick={handlePreviousPage}
               disabled={currentPage === 1}

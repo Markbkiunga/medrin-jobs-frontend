@@ -110,7 +110,7 @@ const EmployerHomepage: React.FC = () => {
           <p className="text-2xl font-bold text-blue-600">3,342</p>
         </div>
         <div className="bg-white shadow rounded-lg p-4 text-center">
-          <p className="text-gray-500">Total Applicants</p>
+          <p className="text-gray-500">Total Applications</p>
           <p className="text-2xl font-bold text-blue-600">77</p>
         </div>
         <div className="bg-white shadow rounded-lg p-4 text-center">
@@ -139,7 +139,7 @@ const EmployerHomepage: React.FC = () => {
           }`}
           onClick={() => setActiveTab('applications')}
         >
-          Applicants
+          Applications
         </button>
         <button
           className={`px-4 py-2 ${
@@ -272,11 +272,11 @@ const EmployerHomepage: React.FC = () => {
 
       {isSidebarOpen && selectedJob && (
         <div
-          className="fixed top-0 right-0 h-full bg-white shadow-lg p-6 transition-transform duration-500 ease-in-out transform translate-x-0"
+          className={`fixed top-0 right-0 h-full bg-white shadow-lg p-6 transition-transform duration-500 ease-in-out transform ${
+            isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
           style={{
             width: '40%',
-            transition: 'transform 0.5s ease, width 0.5s ease',
-            transform: isSidebarOpen ? 'translateX(0)' : 'translateX(100%)',
           }}
         >
           <button
