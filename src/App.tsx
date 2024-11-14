@@ -112,7 +112,7 @@ const App: React.FC = () => {
           path="/employer-homepage"
           element={
             <>
-              <PageTitle title="Home" />
+              <PageTitle title="Home Page" />
               <EmployerHomepage />
             </>
           }
