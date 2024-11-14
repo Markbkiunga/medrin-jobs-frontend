@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import bookmark from '../assets/bookmark.svg';
 import bookmarked from '../assets/bookmarked.svg';
