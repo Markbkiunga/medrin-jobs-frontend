@@ -107,7 +107,7 @@ const DetailedAdminDashboard: React.FC = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="flex flex-col items-center p-4">
+    <div className="flex flex-col items-center p-4 bg-gray-50">
       <h1 className="text-2xl font-bold mb-4 capitalize">{type} Management</h1>
       <div className="w-full max-w-5xl">
         <input
@@ -121,7 +121,7 @@ const DetailedAdminDashboard: React.FC = () => {
           {filteredItems.map((item) => (
             <div
               key={item.id}
-              className="bg-gray-100 p-4 rounded-lg shadow flex justify-between items-center"
+              className="bg-white p-4 rounded-lg shadow flex justify-between items-center"
             >
               <div>
                 {editItemId === item.id ? (

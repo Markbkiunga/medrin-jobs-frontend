@@ -48,7 +48,7 @@ const BlogForm: React.FC = () => {
     navigate('/blogs');
   };
   return (
-    <div className="container flex flex-col justify-center mx-auto p-4 max-w-lg h-screen bg-gray-50">
+    <div className="container flex flex-col justify-center mx-auto p-4 max-w-lg h-screen bg-white">
       <button
         onClick={handleBackClick}
         className="mb-4 px-4 py-2 bg-gray-300 rounded text-black transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-400 hover:shadow-lg"

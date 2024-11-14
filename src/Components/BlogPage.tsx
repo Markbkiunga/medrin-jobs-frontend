@@ -124,10 +124,10 @@ const BlogPage: React.FC = () => {
   if (!blog) return <div>Blog not found</div>;
 
   return (
-    <div className="container m-auto px-4 py-8 bg-gray-50">
+    <div className="p-20 bg-gray-50">
       <button
         onClick={handleBackClick}
-        className="mb-4 px-4 py-2 bg-gray-300 rounded text-black transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-400 hover:shadow-lg"
+        className="mb-4 px-4 py-2 bg-gray-300 rounded text-black transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-400 hover:shadow-lg hover:cursor-pointer"
       >
         ← Back to Blogs
       </button>

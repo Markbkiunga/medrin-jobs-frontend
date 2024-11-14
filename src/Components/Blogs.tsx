@@ -74,7 +74,7 @@ const Blogs: React.FC = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="p-20 bg-gray-50">
       <div className="flex justify-between items-center mb-6">
         <input
           type="text"
@@ -125,11 +125,11 @@ const Blogs: React.FC = () => {
             paginatedBlogs.map((blog) => (
               <div
                 key={blog.id}
-                className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm bg-gray-50"
+                className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm bg-white"
               >
                 <div className="flex-grow mb-4 md:mb-0">
                   <h2
-                    className="text-lg font-semibold text-blue-500 hover:underline cursor-pointer"
+                    className="text-lg font-semibold text-blue-500 hover:underline hover:cursor-pointer"
                     onClick={() => {
                       handleNavigate(blog.id);
                     }}
@@ -208,7 +208,7 @@ const Blogs: React.FC = () => {
                 className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm"
               >
                 <div className="flex-grow mb-4 md:mb-0">
-                  <h2 className="text-lg font-semibold text-blue-600">
+                  <h2 className="text-lg font-semibold text-blue-600 hover:underline hover:cursor-pointer">
                     {blog.name} by {blog.author}
                   </h2>
                   <p className="text-gray-600">{blog.description}</p>
