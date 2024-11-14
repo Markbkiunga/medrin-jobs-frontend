@@ -1,7 +1,10 @@
-// DetailedAdminDashboard.tsx
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { TiTickOutline } from 'react-icons/ti';
+import { GiCancel } from 'react-icons/gi';
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 
+//Should make this interface accept any key-value pairs
 interface Item {
   id: number;
   name: string;
@@ -21,7 +24,7 @@ const DetailedAdminDashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `https://users-admin-dashboard-backend-test.vercel.app/${type}`
+          `https://users-admin-dashboard-backend-test.vercel.app/${type}` //CHANGE URL!!!
         );
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
@@ -38,7 +41,7 @@ const DetailedAdminDashboard: React.FC = () => {
 
   const handleEditClick = (id: number, currentName: string) => {
     setEditItemId(id);
-    setEditedName(currentName); // Set the current name to editedName for input field
+    setEditedName(currentName);
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +51,7 @@ const DetailedAdminDashboard: React.FC = () => {
   const handleEditSave = async (id: number) => {
     try {
       const response = await fetch(
-        `https://users-admin-dashboard-backend-test.vercel.app/${type}/${id}`,
+        `https://users-admin-dashboard-backend-test.vercel.app/${type}/${id}`, //CHANGE URL!!!
         {
           method: 'PATCH',
           headers: {
@@ -83,7 +86,7 @@ const DetailedAdminDashboard: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(
-        `https://users-admin-dashboard-backend-test.vercel.app/${type}/${id}`,
+        `https://users-admin-dashboard-backend-test.vercel.app/${type}/${id}`, //CHANGE URL!!!
         { method: 'DELETE' }
       );
       if (!response.ok) throw new Error('Failed to delete item');
@@ -103,13 +106,20 @@ const DetailedAdminDashboard: React.FC = () => {
       )
     );
   };
-
+  const navigate = useNavigate();
   if (loading) return <div>Loading...</div>;
 
   return (
     <div className="flex flex-col items-center p-4 bg-gray-50">
-      <h1 className="text-2xl font-bold mb-4 capitalize">{type} Management</h1>
+      <h1 className="text-2xl font-bold mb-4 capitalize"> {type} Management</h1>
+
       <div className="w-full max-w-5xl">
+        <button
+          onClick={() => navigate('/admin-dashboard')}
+          className="text-blue-600 mb-4 "
+        >
+          &larr; Back to Dashboard
+        </button>
         <input
           type="text"
           placeholder={`Search ${type || 'items'}`}
@@ -118,12 +128,13 @@ const DetailedAdminDashboard: React.FC = () => {
           className="w-full p-2 border border-gray-300 rounded-md mb-4"
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Will add if...else statements for different types */}
           {filteredItems.map((item) => (
             <div
               key={item.id}
               className="bg-white p-4 rounded-lg shadow flex justify-between items-center"
             >
-              <div>
+              <div className="p-2">
                 {editItemId === item.id ? (
                   <input
                     type="text"
@@ -143,10 +154,10 @@ const DetailedAdminDashboard: React.FC = () => {
                       onClick={() => handleEditSave(item.id)}
                       className="text-green-500"
                     >
-                      ✅
+                      <TiTickOutline className="text-2xl cursor-pointer" />
                     </button>
                     <button onClick={handleEditCancel} className="text-red-500">
-                      ❌
+                      <GiCancel className="text-xl cursor-pointer" />
                     </button>
                   </>
                 ) : (
@@ -155,13 +166,13 @@ const DetailedAdminDashboard: React.FC = () => {
                       onClick={() => handleEditClick(item.id, item.name)}
                       className="text-blue-500"
                     >
-                      ✏️
+                      <FaEdit className=" cursor-pointer" />
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
                       className="text-red-500"
                     >
-                      🗑️
+                      <FaTrashAlt className="cursor-pointer" />
                     </button>
                   </>
                 )}
