@@ -18,7 +18,7 @@ const BlogForm: React.FC = () => {
       description,
       author,
       thumbnail,
-      posted_at: new Date().toISOString(),
+      posted_at: new Date().toISOString().split('T')[0],
       likes_count: 0,
       comments_count: 0,
     };

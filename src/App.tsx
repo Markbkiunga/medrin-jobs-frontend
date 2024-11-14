@@ -11,6 +11,8 @@ import DetailedAdminDashboard from './Components/DetailedAdminDashboard';
 import Blogs from '../src/Components/Blogs';
 import BlogPage from './Components/BlogPage';
 import BlogForm from './Components/BlogForm';
+import EmployerHomepage from './Components/EmployerHomepage';
+import JobPostingForm from './Components/JobPostingForm';
 
 const App: React.FC = () => {
   return (
@@ -103,6 +105,24 @@ const App: React.FC = () => {
             <>
               <PageTitle title="Write Blog Form" />
               <BlogForm />
+            </>
+          }
+        />
+        <Route
+          path="/employer-homepage"
+          element={
+            <>
+              <PageTitle title="Home" />
+              <EmployerHomepage />
+            </>
+          }
+        />
+        <Route
+          path="/job-post-form"
+          element={
+            <>
+              <PageTitle title="Post a Job" />
+              <JobPostingForm />
             </>
           }
         />

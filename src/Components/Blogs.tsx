@@ -14,7 +14,6 @@ type Blog = {
 };
 
 const Blogs: React.FC = () => {
-  //States
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [savedBlogs, setSavedBlogs] = useState<Blog[]>([]);
   const [currentTab, setCurrentTab] = useState<
@@ -23,9 +22,10 @@ const Blogs: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const blogsPerPage = 5;
-  // Fetch Blogs Data
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,37 +44,47 @@ const Blogs: React.FC = () => {
     fetchData();
   }, []);
 
-  // Filtered blogs based on search term which can be name or author
+  // Filter blogs by search term (name or author)
   const filteredBlogs = blogs.filter(
     (blog) =>
       blog.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       blog.author.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Pagination Logic
+  // Pagination calculation
   const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
   const paginatedBlogs = filteredBlogs.slice(
     (currentPage - 1) * blogsPerPage,
     currentPage * blogsPerPage
   );
 
+  // Save blog
   const handleSaveBlog = (blog: Blog) => {
     if (!savedBlogs.some((savedBlog) => savedBlog.id === blog.id)) {
       setSavedBlogs([...savedBlogs, blog]);
     }
   };
 
+  // Unsave blog
   const handleUnsaveBlog = (blogId: number) => {
     setSavedBlogs(savedBlogs.filter((blog) => blog.id !== blogId));
   };
-  const navigate = useNavigate();
+
+  // Navigation to individual blog details
   const handleNavigate = (blogId: number) => {
     navigate(`/blogs/${blogId}`);
+  };
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="p-20 bg-gray-50">
+    <div className="p-20 bg-gray-50 h-screen">
       <div className="flex justify-between items-center mb-6">
         <input
           type="text"
@@ -130,9 +140,7 @@ const Blogs: React.FC = () => {
                 <div className="flex-grow mb-4 md:mb-0">
                   <h2
                     className="text-lg font-semibold text-blue-500 hover:underline hover:cursor-pointer"
-                    onClick={() => {
-                      handleNavigate(blog.id);
-                    }}
+                    onClick={() => handleNavigate(blog.id)}
                   >
                     {blog.name} by {blog.author}
                   </h2>
@@ -174,24 +182,26 @@ const Blogs: React.FC = () => {
             <p className="text-gray-500">No blogs found.</p>
           )}
 
-          {/* Pagination */}
-          <div className="flex justify-center items-center mt-4 space-x-4">
+          {/* Pagination Component */}
+          <div className="flex justify-center mt-4 items-center text-gray-600">
             <button
-              className="text-gray-600 hover:text-blue-600"
+              onClick={handlePreviousPage}
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className={`mr-2 ${
+                currentPage === 1 ? 'text-gray-400' : 'text-blue-500'
+              }`}
             >
               Previous
             </button>
-            <span className="text-gray-700">
+            <span>
               Page {currentPage} of {totalPages}
             </span>
             <button
-              className="text-gray-600 hover:text-blue-600"
+              onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
+              className={`ml-2 ${
+                currentPage === totalPages ? 'text-gray-400' : 'text-blue-500'
+              }`}
             >
               Next
             </button>
@@ -208,7 +218,10 @@ const Blogs: React.FC = () => {
                 className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm"
               >
                 <div className="flex-grow mb-4 md:mb-0">
-                  <h2 className="text-lg font-semibold text-blue-600 hover:underline hover:cursor-pointer">
+                  <h2
+                    className="text-lg font-semibold text-blue-600 hover:underline hover:cursor-pointer"
+                    onClick={() => handleNavigate(blog.id)}
+                  >
                     {blog.name} by {blog.author}
                   </h2>
                   <p className="text-gray-600">{blog.description}</p>
@@ -217,21 +230,12 @@ const Blogs: React.FC = () => {
                   </p>
                 </div>
                 <button className="text-gray-500 hover:text-gray-700">
-                  {savedBlogs.some((savedBlog) => savedBlog.id === blog.id) ? (
-                    <img
-                      className="w-12"
-                      src={bookmarked}
-                      alt="bookmarked-icon"
-                      onClick={() => handleUnsaveBlog(blog.id)}
-                    />
-                  ) : (
-                    <img
-                      className="w-12"
-                      src={bookmark}
-                      alt="bookmark-icon"
-                      onClick={() => handleSaveBlog(blog)}
-                    />
-                  )}
+                  <img
+                    className="w-12"
+                    src={bookmarked}
+                    alt="bookmarked-icon"
+                    onClick={() => handleUnsaveBlog(blog.id)}
+                  />
                 </button>
               </div>
             ))
@@ -243,8 +247,7 @@ const Blogs: React.FC = () => {
 
       {currentTab === 'myblogs' && (
         <div className="mt-8">
-          {/* <h3 className="text-xl font-semibold mb-4">My Blogs</h3> */}
-          <p className="text-gray-500">This section is under construction.</p>
+          <p className="text-gray-500">You haven't written any blogs yet.</p>
         </div>
       )}
     </div>
