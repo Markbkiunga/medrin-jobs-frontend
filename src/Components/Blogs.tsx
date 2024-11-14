@@ -16,6 +16,7 @@ type Blog = {
 const Blogs: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [savedBlogs, setSavedBlogs] = useState<Blog[]>([]);
+  const [myBlogs, setMyBlogs] = useState<Blog[]>([]);
   const [currentTab, setCurrentTab] = useState<
     'discover' | 'saved' | 'myblogs'
   >('discover');
@@ -183,7 +184,7 @@ const Blogs: React.FC = () => {
           )}
 
           {/* Pagination Component */}
-          <div className="flex justify-center mt-4 items-center text-gray-600">
+          <div className="flex justify-center my-4 items-center text-gray-600">
             <button
               onClick={handlePreviousPage}
               disabled={currentPage === 1}
@@ -246,8 +247,17 @@ const Blogs: React.FC = () => {
       )}
 
       {currentTab === 'myblogs' && (
-        <div className="mt-8">
-          <p className="text-gray-500">You haven't written any blogs yet.</p>
+        <div className="space-y-6">
+          {myBlogs.length > 0 ? (
+            myBlogs.map((blog) => (
+              <div
+                key={blog.id}
+                className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm"
+              ></div>
+            ))
+          ) : (
+            <p className="text-gray-500">No written blogs yet.</p>
+          )}
         </div>
       )}
     </div>

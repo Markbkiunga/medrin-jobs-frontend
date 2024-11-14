@@ -14,9 +14,17 @@ interface Job {
   salary: string;
   work_hours: 'Full-time' | 'Part-time';
 }
+//Define Application Type
+interface Application {
+  id: number;
+}
 
 const EmployerHomepage: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [approvedApplications, setApprovedApplications] = useState<
+    Application[]
+  >([]);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -95,7 +103,7 @@ const EmployerHomepage: React.FC = () => {
   return (
     <div className="container flex flex-col mx-auto p-4 h-screen">
       {/* Tiles at the top */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-4 mt-20 mb-6">
         <div className="bg-white shadow rounded-lg p-4 text-center">
           <p className="text-gray-500">Jobs Posted</p>
           <p className="text-2xl font-bold text-blue-600">3,342</p>
@@ -124,11 +132,11 @@ const EmployerHomepage: React.FC = () => {
         </button>
         <button
           className={`px-4 py-2 ${
-            activeTab === 'applicants'
+            activeTab === 'applications'
               ? 'border-b-2 border-blue-600 text-blue-600'
               : 'text-gray-500'
           }`}
-          onClick={() => setActiveTab('applicants')}
+          onClick={() => setActiveTab('applications')}
         >
           Applicants
         </button>
@@ -164,70 +172,102 @@ const EmployerHomepage: React.FC = () => {
       {/* Job Cards */}
       {activeTab === 'jobsPosted' && (
         <div className="grid gap-4">
-          {paginatedJobs.map((job) => (
-            <div
-              key={job.name}
-              className="p-4 bg-white shadow rounded-lg flex justify-between items-center"
-            >
-              <div>
-                <h2
-                  className="text-lg font-semibold text-blue-600 hover:underline hover:cursor-pointer"
-                  onClick={() => handleJobClick(job)}
-                >
-                  {job.name}
-                </h2>
-                <p className="text-gray-600">{job.description}</p>
-                <p className="text-gray-500">{job.location}</p>
-                <p className="text-gray-400 text-sm">
-                  Posted on: {job.posted_at}
-                </p>
-              </div>
-              <div className="text-right">
-                <p>
-                  Work hours:{' '}
-                  <span className="text-blue-600">{job.work_hours}</span>
-                </p>
-                <p>
-                  Salary: <span className="text-blue-600">${job.salary}</span>
-                </p>
-                <p>
-                  Type:{' '}
-                  <span className="text-blue-600">{job.workplace_type}</span>
-                </p>
-                <div className="flex items-center justify-end space-x-2 mt-2">
-                  <FaEdit className="text-blue-500 cursor-pointer" />
-                  <FaTrashAlt className="text-red-500 cursor-pointer" />
+          {paginatedJobs.length > 0 ? (
+            paginatedJobs.map((job) => (
+              <div
+                key={job.name}
+                className="p-4 bg-white shadow rounded-lg flex justify-between items-center"
+              >
+                <div>
+                  <h2
+                    className="text-lg font-semibold text-blue-600 hover:underline hover:cursor-pointer"
+                    onClick={() => handleJobClick(job)}
+                  >
+                    {job.name}
+                  </h2>
+                  <p className="text-gray-600">{job.description}</p>
+                  <p className="text-gray-500">{job.location}</p>
+                  <p className="text-gray-400 text-sm">
+                    Posted on: {job.posted_at}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p>
+                    Work hours:{' '}
+                    <span className="text-blue-600">{job.work_hours}</span>
+                  </p>
+                  <p>
+                    Salary: <span className="text-blue-600">${job.salary}</span>
+                  </p>
+                  <p>
+                    Type:{' '}
+                    <span className="text-blue-600">{job.workplace_type}</span>
+                  </p>
+                  <div className="flex items-center justify-end space-x-2 mt-2">
+                    <FaEdit className="text-blue-500 cursor-pointer" />
+                    <FaTrashAlt className="text-red-500 cursor-pointer" />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-gray-500">No blogs found.</p>
+          )}
+          {/* Pagination Component */}
+          <div className="flex justify-center my-4 items-center text-gray-600">
+            <button
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+              className={`mr-2 ${
+                currentPage === 1 ? 'text-gray-400' : 'text-blue-500'
+              }`}
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className={`ml-2 ${
+                currentPage === totalPages ? 'text-gray-400' : 'text-blue-500'
+              }`}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+      {activeTab === 'applications' && (
+        <div className="space-y-6">
+          {applications.length > 0 ? (
+            applications.map((application) => (
+              <div
+                key={application.id}
+                className="p-4 bg-white shadow rounded-lg flex justify-between items-center"
+              ></div>
+            ))
+          ) : (
+            <p className="text-gray-500">No applications yet.</p>
+          )}
         </div>
       )}
 
-      {/* Pagination Component */}
-      <div className="flex justify-center mt-4 items-center text-gray-600">
-        <button
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-          className={`mr-2 ${
-            currentPage === 1 ? 'text-gray-400' : 'text-blue-500'
-          }`}
-        >
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-          className={`ml-2 ${
-            currentPage === totalPages ? 'text-gray-400' : 'text-blue-500'
-          }`}
-        >
-          Next
-        </button>
-      </div>
+      {activeTab === 'approvedApplications' && (
+        <div className="space-y-6">
+          {approvedApplications.length > 0 ? (
+            approvedApplications.map((application) => (
+              <div
+                key={application.id}
+                className="p-4 bg-white shadow rounded-lg flex justify-between items-center"
+              ></div>
+            ))
+          ) : (
+            <p className="text-gray-500">No approved applications yet.</p>
+          )}
+        </div>
+      )}
 
       {isSidebarOpen && selectedJob && (
         <div
