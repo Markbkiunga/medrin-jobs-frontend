@@ -161,11 +161,11 @@ const EmployerHomepage: React.FC = () => {
             paginatedJobs.map((job) => (
               <div
                 key={job.name}
-                className="p-4 bg-white shadow rounded-lg flex justify-between items-center"
+                className="p-4 bg-white shadow rounded-lg flex justify-between items-center transform transition-transform duration-300 cursor-pointer hover:scale-105"
                 onClick={() => handleJobClick(job)}
               >
                 <div>
-                  <h2 className="text-lg font-semibold text-blue-600 hover:underline cursor-pointer">
+                  <h2 className="text-lg font-semibold text-blue-600">
                     {job.name}
                   </h2>
                   <p className="text-gray-600">{job.description}</p>

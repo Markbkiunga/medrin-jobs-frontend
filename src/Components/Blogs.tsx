@@ -137,11 +137,11 @@ const Blogs: React.FC = () => {
             paginatedBlogs.map((blog) => (
               <div
                 key={blog.id}
-                className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm bg-white"
+                className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm bg-white transform transition-transform duration-300 cursor-pointer hover:scale-105"
               >
                 <div className="flex-grow mb-4 md:mb-0">
                   <h2
-                    className="text-lg font-semibold text-blue-500 hover:underline hover:cursor-pointer"
+                    className="text-lg font-semibold text-blue-500"
                     onClick={() => handleNavigate(blog.id)}
                   >
                     {blog.name} by {blog.author}
