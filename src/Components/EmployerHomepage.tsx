@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
@@ -15,7 +14,8 @@ interface Job {
   salary: string;
   work_hours: 'Full-time' | 'Part-time';
 }
-//Define Application Type
+
+// Define Application Type
 interface Application {
   id: number;
 }
@@ -36,16 +36,14 @@ const EmployerHomepage: React.FC = () => {
   const jobsPerPage = 5;
   const navigate = useNavigate();
 
-  const handleNavigate = () => {
-    navigate('/job-post-form');
-  };
+  const handleNavigate = () => navigate('/job-post-form');
 
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true);
       try {
         const response = await fetch(
-          'https://jobs-admin-dashboard-backend-test.vercel.app/jobs'
+          'https://jobs-admin-dashboard-backend-test.vercel.app/jobs' //CHANGE URL!!!
         );
         const data = await response.json();
         setJobs(data);
@@ -66,38 +64,33 @@ const EmployerHomepage: React.FC = () => {
 
   const handleCloseSidebar = () => {
     setIsSidebarOpen(false);
-    setSelectedJob(null);
+    setTimeout(() => setSelectedJob(null), 500);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
-    if (query) {
-      const filtered = jobs.filter(
+    setFilteredJobs(
+      jobs.filter(
         (job) =>
           job.name.toLowerCase().includes(query) ||
           job.description.toLowerCase().includes(query)
-      );
-      setFilteredJobs(filtered);
-    } else {
-      setFilteredJobs(jobs);
-    }
-    setCurrentPage(1);
+      )
+    );
+    setCurrentPage(1); // Reset to the first page on search
   };
 
+  // Pagination Logic
   const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
   const paginatedJobs = filteredJobs.slice(
     (currentPage - 1) * jobsPerPage,
     currentPage * jobsPerPage
   );
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
+  const handleNextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const handlePreviousPage = () =>
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   if (loading) return <div>Loading...</div>;
 
@@ -107,50 +100,41 @@ const EmployerHomepage: React.FC = () => {
       <div className="grid grid-cols-3 gap-4 mt-20 mb-6">
         <div className="bg-white shadow rounded-lg p-4 text-center">
           <p className="text-gray-500">Jobs Posted</p>
-          <p className="text-2xl font-bold text-blue-600">3,342</p>
+          <p className="text-2xl font-bold text-blue-600">{jobs.length}</p>
         </div>
         <div className="bg-white shadow rounded-lg p-4 text-center">
           <p className="text-gray-500">Total Applications</p>
-          <p className="text-2xl font-bold text-blue-600">77</p>
+          <p className="text-2xl font-bold text-blue-600">
+            {applications.length}
+          </p>
         </div>
         <div className="bg-white shadow rounded-lg p-4 text-center">
           <p className="text-gray-500">Approved Applications</p>
-          <p className="text-2xl font-bold text-blue-600">77</p>
+          <p className="text-2xl font-bold text-blue-600">
+            {approvedApplications.length}
+          </p>
         </div>
       </div>
 
       {/* Tabs for Job Sections */}
-      <div className="border-b mb-4">
-        <button
-          className={`px-4 py-2 ${
-            activeTab === 'jobsPosted'
-              ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-500'
-          }`}
-          onClick={() => setActiveTab('jobsPosted')}
-        >
-          Jobs Posted
-        </button>
-        <button
-          className={`px-4 py-2 ${
-            activeTab === 'applications'
-              ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-500'
-          }`}
-          onClick={() => setActiveTab('applications')}
-        >
-          Applications
-        </button>
-        <button
-          className={`px-4 py-2 ${
-            activeTab === 'approvedApplications'
-              ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-500'
-          }`}
-          onClick={() => setActiveTab('approvedApplications')}
-        >
-          Approved Applications
-        </button>
+      <div className="border-b mb-4 flex flex-col md:flex-row">
+        {['jobsPosted', 'applications', 'approvedApplications'].map((tab) => (
+          <button
+            key={tab}
+            className={`px-4 py-2 ${
+              activeTab === tab
+                ? 'border-b-2 border-blue-600 text-blue-600'
+                : 'text-gray-500'
+            }`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab === 'jobsPosted'
+              ? 'Jobs Posted'
+              : tab === 'applications'
+              ? 'Applications'
+              : 'Approved Applications'}
+          </button>
+        ))}
       </div>
 
       {/* Search and Post Job button */}
@@ -178,12 +162,10 @@ const EmployerHomepage: React.FC = () => {
               <div
                 key={job.name}
                 className="p-4 bg-white shadow rounded-lg flex justify-between items-center"
+                onClick={() => handleJobClick(job)}
               >
                 <div>
-                  <h2
-                    className="text-lg font-semibold text-blue-600 hover:underline hover:cursor-pointer"
-                    onClick={() => handleJobClick(job)}
-                  >
+                  <h2 className="text-lg font-semibold text-blue-600 hover:underline cursor-pointer">
                     {job.name}
                   </h2>
                   <p className="text-gray-600">{job.description}</p>
@@ -212,7 +194,7 @@ const EmployerHomepage: React.FC = () => {
               </div>
             ))
           ) : (
-            <p className="text-gray-500">No blogs found.</p>
+            <p className="text-gray-500">No jobs found.</p>
           )}
           {/* Pagination Component */}
           <div className="flex justify-center my-4 items-center text-gray-600">
@@ -240,73 +222,58 @@ const EmployerHomepage: React.FC = () => {
           </div>
         </div>
       )}
-      {activeTab === 'applications' && (
-        <div className="space-y-6">
-          {applications.length > 0 ? (
-            applications.map((application) => (
-              <div
-                key={application.id}
-                className="p-4 bg-white shadow rounded-lg flex justify-between items-center"
-              ></div>
-            ))
-          ) : (
-            <p className="text-gray-500">No applications yet.</p>
-          )}
-        </div>
-      )}
 
-      {activeTab === 'approvedApplications' && (
-        <div className="space-y-6">
-          {approvedApplications.length > 0 ? (
-            approvedApplications.map((application) => (
-              <div
-                key={application.id}
-                className="p-4 bg-white shadow rounded-lg flex justify-between items-center"
-              ></div>
-            ))
-          ) : (
-            <p className="text-gray-500">No approved applications yet.</p>
-          )}
-        </div>
+      {/* Conditional Rendering of Other Tabs */}
+      {activeTab === 'applications' && applications.length === 0 && (
+        <p className="text-gray-500">No applications yet.</p>
       )}
+      {activeTab === 'approvedApplications' &&
+        approvedApplications.length === 0 && (
+          <p className="text-gray-500">No approved applications yet.</p>
+        )}
 
-      {isSidebarOpen && selectedJob && (
-        <div
-          className={`fixed top-0 right-0 h-full bg-white shadow-lg p-6 transition-transform duration-500 ease-in-out transform ${
-            isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
-          style={{
-            width: '40%',
-          }}
-        >
-          <button
-            onClick={handleCloseSidebar}
-            className="text-gray-500 mb-4 text-lg"
-          >
-            &larr; Back
-          </button>
-          <h2 className="text-2xl font-bold text-blue-600 mb-4">
-            {selectedJob.name}
-          </h2>
-          <p>
-            <strong>Description:</strong> {selectedJob.description}
-          </p>
-          <p>
-            <strong>Location:</strong> {selectedJob.location}
-          </p>
-          <p>
-            <strong>Posted At:</strong> {selectedJob.posted_at}
-          </p>
-          <p>
-            <strong>Work Hours:</strong> {selectedJob.work_hours}
-          </p>
-          <p>
-            <strong>Salary:</strong> {selectedJob.salary}
-          </p>
-          <p>
-            <strong>Type:</strong> {selectedJob.workplace_type}
-          </p>
-        </div>
+      {/* Job Detail Sidebar */}
+      <div
+        className={`fixed top-0 right-0 h-full bg-white shadow-lg p-6 transition-transform duration-500 ease-in-out transform ${
+          isSidebarOpen ? 'translate-x-0 w-4/5 md:w-2/5' : 'translate-x-full'
+        }`}
+      >
+        {isSidebarOpen && selectedJob && (
+          <>
+            <button
+              onClick={handleCloseSidebar}
+              className="text-gray-500 mb-4 text-lg"
+            >
+              &larr; Back
+            </button>
+            <h2 className="text-2xl font-bold text-blue-600 mb-4">
+              {selectedJob.name}
+            </h2>
+            <p>
+              <strong>Description:</strong> {selectedJob.description}
+            </p>
+            <p>
+              <strong>Location:</strong> {selectedJob.location}
+            </p>
+            <p>
+              <strong>Posted At:</strong> {selectedJob.posted_at}
+            </p>
+            <p>
+              <strong>Work Hours:</strong> {selectedJob.work_hours}
+            </p>
+            <p>
+              <strong>Salary:</strong> {selectedJob.salary}
+            </p>
+            <p>
+              <strong>Type:</strong> {selectedJob.workplace_type}
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Background Overlay (for smaller screens) */}
+      {isSidebarOpen && (
+        <div onClick={handleCloseSidebar} className="fixed inset-0 md:hidden" />
       )}
     </div>
   );
