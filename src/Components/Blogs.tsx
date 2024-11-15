@@ -16,7 +16,11 @@ type Blog = {
 
 const Blogs: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [savedBlogs, setSavedBlogs] = useState<Blog[]>([]);
+  const [savedBlogs, setSavedBlogs] = useState<Blog[]>(() => {
+    // Retrieve saved blogs from localStorage on initial load
+    const saved = localStorage.getItem('savedBlogs');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [myBlogs, setMyBlogs] = useState<Blog[]>([]);
   const [currentTab, setCurrentTab] = useState<
     'discover' | 'saved' | 'myblogs'
@@ -45,6 +49,11 @@ const Blogs: React.FC = () => {
     };
     fetchData();
   }, []);
+
+  // Update localStorage whenever savedBlogs changes
+  useEffect(() => {
+    localStorage.setItem('savedBlogs', JSON.stringify(savedBlogs));
+  }, [savedBlogs]);
 
   // Filter blogs by search term (name or author)
   const filteredBlogs = blogs.filter(
@@ -76,6 +85,7 @@ const Blogs: React.FC = () => {
   const handleNavigate = (blogId: number) => {
     navigate(`/blogs/${blogId}`);
   };
+
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
@@ -83,6 +93,7 @@ const Blogs: React.FC = () => {
   const handlePreviousPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
+
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -217,11 +228,11 @@ const Blogs: React.FC = () => {
             savedBlogs.map((blog) => (
               <div
                 key={blog.id}
-                className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm"
+                className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm bg-white transform transition-transform duration-300 cursor-pointer hover:scale-105"
               >
                 <div className="flex-grow mb-4 md:mb-0">
                   <h2
-                    className="text-lg font-semibold text-blue-600 hover:underline hover:cursor-pointer"
+                    className="text-lg font-semibold text-blue-500"
                     onClick={() => handleNavigate(blog.id)}
                   >
                     {blog.name} by {blog.author}
