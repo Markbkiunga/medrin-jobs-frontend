@@ -148,13 +148,11 @@ const Blogs: React.FC = () => {
             paginatedBlogs.map((blog) => (
               <div
                 key={blog.id}
+                onClick={() => handleNavigate(blog.id)}
                 className="flex flex-col md:flex-row items-center md:items-start p-4 border rounded-lg shadow-sm bg-white transform transition-transform duration-300 cursor-pointer hover:scale-105"
               >
                 <div className="flex-grow mb-4 md:mb-0">
-                  <h2
-                    className="text-lg font-semibold text-blue-500"
-                    onClick={() => handleNavigate(blog.id)}
-                  >
+                  <h2 className="text-lg font-semibold text-blue-500">
                     {blog.name} by {blog.author}
                   </h2>
                   <p className="text-gray-600">{blog.description}</p>
@@ -178,14 +176,20 @@ const Blogs: React.FC = () => {
                       className="w-12"
                       src={bookmarked}
                       alt="bookmarked-icon"
-                      onClick={() => handleUnsaveBlog(blog.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUnsaveBlog(blog.id);
+                      }}
                     />
                   ) : (
                     <img
                       className="w-12"
                       src={bookmark}
                       alt="bookmark-icon"
-                      onClick={() => handleSaveBlog(blog)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSaveBlog(blog);
+                      }}
                     />
                   )}
                 </button>
@@ -247,7 +251,10 @@ const Blogs: React.FC = () => {
                     className="w-12"
                     src={bookmarked}
                     alt="bookmarked-icon"
-                    onClick={() => handleUnsaveBlog(blog.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleUnsaveBlog(blog.id);
+                    }}
                   />
                 </button>
               </div>
