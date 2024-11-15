@@ -1,4 +1,3 @@
-// BlogPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -28,7 +27,29 @@ const BlogPage: React.FC = () => {
   const [newComment, setNewComment] = useState('');
   const [refresh, setRefresh] = useState(false);
 
+  const [likedBlogs, setLikedBlogs] = useState<Set<number>>(new Set());
+  const [likedComments, setLikedComments] = useState<Set<number>>(new Set());
+
   const navigate = useNavigate();
+
+  // Load likes from localStorage
+  useEffect(() => {
+    const storedBlogLikes = localStorage.getItem('likedBlogs');
+    const storedCommentLikes = localStorage.getItem('likedComments');
+
+    if (storedBlogLikes) setLikedBlogs(new Set(JSON.parse(storedBlogLikes)));
+    if (storedCommentLikes)
+      setLikedComments(new Set(JSON.parse(storedCommentLikes)));
+  }, []);
+
+  // Persist likes to localStorage
+  useEffect(() => {
+    localStorage.setItem('likedBlogs', JSON.stringify(Array.from(likedBlogs)));
+    localStorage.setItem(
+      'likedComments',
+      JSON.stringify(Array.from(likedComments))
+    );
+  }, [likedBlogs, likedComments]);
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -50,19 +71,67 @@ const BlogPage: React.FC = () => {
 
   const handleLikeBlog = async () => {
     if (!blog) return;
+    const hasLiked = likedBlogs.has(blog.id);
+
     try {
       const response = await fetch(
         `https://blogs-admin-dashboard-backend-test-iuig.vercel.app/blogs/${id}`,
         {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ likes_count: blog.likes_count + 1 }),
+          body: JSON.stringify({
+            likes_count: blog.likes_count + (hasLiked ? -1 : 1),
+          }),
         }
       );
-      if (!response.ok) throw new Error('Failed to like blog');
-      setBlog({ ...blog, likes_count: blog.likes_count + 1 });
+      if (!response.ok) throw new Error('Failed to like/dislike blog');
+
+      setBlog({
+        ...blog,
+        likes_count: blog.likes_count + (hasLiked ? -1 : 1),
+      });
+      setLikedBlogs((prev) => {
+        const updated = new Set(prev);
+        if (hasLiked) updated.delete(blog.id);
+        else updated.add(blog.id);
+        return updated;
+      });
     } catch (error) {
-      console.error('Error liking blog:', error);
+      console.error('Error liking/disliking blog:', error);
+    }
+  };
+
+  const handleLikeComment = async (commentId: number) => {
+    if (!blog) return;
+
+    const hasLiked = likedComments.has(commentId);
+
+    const updatedComments = blog.comments.map((comment) =>
+      comment.id === commentId
+        ? { ...comment, likes_count: comment.likes_count + (hasLiked ? -1 : 1) }
+        : comment
+    );
+
+    try {
+      const response = await fetch(
+        `https://blogs-admin-dashboard-backend-test-iuig.vercel.app/blogs/${id}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ comments: updatedComments }),
+        }
+      );
+      if (!response.ok) throw new Error('Failed to like/dislike comment');
+
+      setBlog({ ...blog, comments: updatedComments });
+      setLikedComments((prev) => {
+        const updated = new Set(prev);
+        if (hasLiked) updated.delete(commentId);
+        else updated.add(commentId);
+        return updated;
+      });
+    } catch (error) {
+      console.error('Error liking/disliking comment:', error);
     }
   };
 
@@ -94,31 +163,10 @@ const BlogPage: React.FC = () => {
     }
   };
 
-  const handleLikeComment = async (commentId: number) => {
-    if (!blog) return;
-    const updatedComments = blog.comments.map((comment) =>
-      comment.id === commentId
-        ? { ...comment, likes_count: comment.likes_count + 1 }
-        : comment
-    );
-    try {
-      const response = await fetch(
-        `https://blogs-admin-dashboard-backend-test-iuig.vercel.app/blogs/${id}`,
-        {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ comments: updatedComments }),
-        }
-      );
-      if (!response.ok) throw new Error('Failed to like comment');
-      setBlog({ ...blog, comments: updatedComments });
-    } catch (error) {
-      console.error('Error liking comment:', error);
-    }
-  };
   const handleBackClick = () => {
     navigate('/blogs');
   };
+
   if (loading) return <div>Loading...</div>;
 
   if (!blog) return <div>Blog not found</div>;
@@ -142,24 +190,22 @@ const BlogPage: React.FC = () => {
         className="mb-6 rounded-lg"
       />
       <div className="text-xl mb-6">
-        {/* Displaying random lorem text as blog content */}
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eaque rerum
-        dignissimos aut a saepe similique, sint nesciunt ducimus praesentium
-        libero voluptates commodi dolorem corrupti ea officiis architecto
-        repellat esse nihil culpa unde debitis dolore! Voluptatem ipsum
-        repellendus consequatur, praesentium molestias ipsa, recusandae quos
-        mollitia quibusdam voluptate, eligendi ipsam voluptatibus natus quo
-        ratione vel aliquid tenetur laudantium minus porro itaque ullam
-        cupiditate. Excepturi inventore, accusamus placeat incidunt impedit modi
-        dicta. Doloribus doloremque animi necessitatibus aut porro, pariatur
-        voluptas saepe quo ut officia fugit quisquam rem culpa magnam adipisci
-        veniam unde accusantium, ipsa in officiis laudantium sed! Nihil sit
-        adipisci eius asperiores.
-        {/* More content */}
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae
+        facere omnis nisi optio dicta eius. Assumenda maxime ab rerum delectus!
+        Ipsa porro ea reprehenderit distinctio deserunt assumenda saepe
+        laudantium optio, et veritatis aspernatur dolor neque deleniti iusto
+        consequuntur accusantium debitis maiores blanditiis aperiam sit enim!
+        Corporis molestias labore aliquam debitis omnis ullam nam? Repellendus
+        placeat cum illo. Perferendis dignissimos eius cum dicta sed quibusdam
+        ipsam fugit quisquam. Consequuntur excepturi, molestias consectetur
+        eveniet delectus doloremque optio assumenda soluta natus magni?
+        Voluptate consequatur perferendis facere architecto officiis repellat
+        adipisci sed eligendi distinctio quam id dicta culpa, qui aperiam vero!
+        Iure, illum minima?
       </div>
       <div className="flex items-center mb-4">
-        <button onClick={handleLikeBlog} className="text-red-500 mr-2">
-          ❤️ {blog.likes_count}
+        <button onClick={handleLikeBlog} className="mr-2">
+          {likedBlogs.has(blog.id) ? '❤️' : '🤍'} {blog.likes_count}
         </button>
         <span>💬 {blog.comments_count}</span>
       </div>
@@ -172,7 +218,7 @@ const BlogPage: React.FC = () => {
             onClick={() => handleLikeComment(comment.id)}
             className="text-blue-500"
           >
-            👍 {comment.likes_count}
+            {likedComments.has(comment.id) ? '👍' : '👎'} {comment.likes_count}
           </button>
         </div>
       ))}
