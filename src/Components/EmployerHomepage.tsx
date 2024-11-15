@@ -35,6 +35,8 @@ const EmployerHomepage: React.FC = () => {
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState('jobsPosted');
+  const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const jobsPerPage = 5;
   const navigate = useNavigate();
 
@@ -109,7 +111,43 @@ const EmployerHomepage: React.FC = () => {
     );
     setJobBeingEdited(null);
   };
+  const handleDeleteClick = (job: Job, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the job click event
+    setJobToDelete(job);
+    setIsDeleteModalOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    if (!jobToDelete) return;
+
+    try {
+      const response = await fetch(
+        `https://jobs-admin-dashboard-backend-test.vercel.app/jobs/${jobToDelete.id}`,
+        {
+          method: 'DELETE',
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete the job');
+      }
+
+      // Remove the job from the frontend state
+      setJobs((prevJobs) =>
+        prevJobs.filter((job) => job.id !== jobToDelete.id)
+      );
+      setIsDeleteModalOpen(false);
+      setJobToDelete(null);
+      navigate('/employer-homepage');
+    } catch (error) {
+      console.error('Error deleting job:', error);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setJobToDelete(null);
+  };
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -176,75 +214,111 @@ const EmployerHomepage: React.FC = () => {
       {activeTab === 'jobsPosted' && (
         <div className="grid gap-4">
           {paginatedJobs.length > 0 ? (
-        paginatedJobs.map((job) => (
-          <div
-            key={job.id}
-            className="p-4 bg-white shadow rounded-lg flex justify-between items-center transform transition-transform duration-300 cursor-pointer hover:scale-105"
-            onClick={() => handleJobClick(job)}
-          >
-            <div>
-              <h2 className="text-lg font-semibold text-blue-600">{job.name}</h2>
-              <p className="text-gray-600">{job.description}</p>
-              <p className="text-gray-500">{job.location}</p>
-              <p className="text-gray-400 text-sm">Posted on: {job.postedAt}</p>
-            </div>
-            <div className="text-right">
-              <p>
-                Work hours: <span className="text-blue-600">{job.workHours}</span>
-              </p>
-              <p>
-                Salary: <span className="text-blue-600">${job.salary}</span>
-              </p>
-              <p>
-                Type: <span className="text-blue-600">{job.workplaceType}</span>
-              </p>
-              <div className="flex items-center justify-end space-x-2 mt-2">
-                <FaEdit
-                  className="text-blue-500 cursor-pointer"
-                  onClick={(e) => handleEditClick(job, e)}
-                />
-                <FaTrashAlt className="text-red-500 cursor-pointer" />
+            paginatedJobs.map((job) => (
+              <div
+                key={job.id}
+                className="p-4 bg-white shadow rounded-lg flex justify-between items-center transform transition-transform duration-300 cursor-pointer hover:scale-105"
+                onClick={() => handleJobClick(job)}
+              >
+                <div>
+                  <h2 className="text-lg font-semibold text-blue-600">
+                    {job.name}
+                  </h2>
+                  <p className="text-gray-600">{job.description}</p>
+                  <p className="text-gray-500">{job.location}</p>
+                  <p className="text-gray-400 text-sm">
+                    Posted on: {job.postedAt}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p>
+                    Work hours:{' '}
+                    <span className="text-blue-600">{job.workHours}</span>
+                  </p>
+                  <p>
+                    Salary: <span className="text-blue-600">${job.salary}</span>
+                  </p>
+                  <p>
+                    Type:{' '}
+                    <span className="text-blue-600">{job.workplaceType}</span>
+                  </p>
+                  <div className="flex items-center justify-end space-x-2 mt-2">
+                    <FaEdit
+                      className="text-blue-500 cursor-pointer"
+                      onClick={(e) => handleEditClick(job, e)}
+                    />
+                    <FaTrashAlt
+                      className="text-red-500 cursor-pointer"
+                      onClick={(e) => handleDeleteClick(job, e)}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500">No jobs found.</p>
+          )}
+
+          {/* Pagination Component */}
+          <div className="flex justify-center my-4 items-center text-gray-600">
+            <button
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+              className={`mr-2 ${
+                currentPage === 1 ? 'text-gray-400' : 'text-blue-500'
+              }`}
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className={`ml-2 ${
+                currentPage === totalPages ? 'text-gray-400' : 'text-blue-500'
+              }`}
+            >
+              Next
+            </button>
+          </div>
+
+          {/* Render the modal outside the map loop */}
+          {jobBeingEdited && (
+            <EditJobModalForm
+              job={jobBeingEdited}
+              onClose={handleModalClose}
+              onUpdate={handleJobUpdate}
+            />
+          )}
+          {/* Delete Confirmation Modal */}
+          {isDeleteModalOpen && jobToDelete && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg w-full sm:w-4/5 md:w-2/3 lg:w-1/2">
+                <h2 className="text-lg font-bold mb-4">Confirm Deletion</h2>
+                <p>
+                  Are you sure you want to delete the job{' '}
+                  <span className="font-semibold">{jobToDelete.name}</span>?
+                  This action cannot be undone.
+                </p>
+                <div className="flex justify-end space-x-4 mt-6">
+                  <button
+                    className="px-4 py-2 bg-gray-200 rounded"
+                    onClick={handleCancelDelete}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
+                    onClick={handleConfirmDelete}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))
-      ) : (
-        <p className="text-gray-500">No jobs found.</p>
-      )}
-
-      {/* Pagination Component */}
-      <div className="flex justify-center my-4 items-center text-gray-600">
-        <button
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-          className={`mr-2 ${
-            currentPage === 1 ? 'text-gray-400' : 'text-blue-500'
-          }`}
-        >
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-          className={`ml-2 ${
-            currentPage === totalPages ? 'text-gray-400' : 'text-blue-500'
-          }`}
-        >
-          Next
-        </button>
-      </div>
-
-      {/* Render the modal outside the map loop */}
-      {jobBeingEdited && (
-        <EditJobModalForm
-          job={jobBeingEdited}
-          onClose={handleModalClose}
-          onUpdate={handleJobUpdate}
-        />
-      )}
+          )}
         </div>
       )}
 
