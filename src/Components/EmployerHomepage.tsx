@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import EditJobModalForm from './EditJobModalForm';
 
 // Define the Job type
 interface Job {
@@ -9,10 +10,10 @@ interface Job {
   name: string;
   description: string;
   location: string;
-  posted_at: string;
-  workplace_type: 'On-site' | 'Remote' | 'Hybrid';
+  postedAt: string;
+  workplaceType: 'On-site' | 'Remote' | 'Hybrid';
   salary: string;
-  work_hours: 'Full-time' | 'Part-time';
+  workHours: 'Full-time' | 'Part-time';
 }
 
 // Define Application Type
@@ -27,6 +28,7 @@ const EmployerHomepage: React.FC = () => {
     Application[]
   >([]);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [jobBeingEdited, setJobBeingEdited] = useState<Job | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -91,6 +93,22 @@ const EmployerHomepage: React.FC = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const handlePreviousPage = () =>
     setCurrentPage((prev) => Math.max(prev - 1, 1));
+
+  const handleEditClick = (job: Job, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event from propagating to job card click
+    setJobBeingEdited(job);
+  };
+
+  const handleModalClose = () => {
+    setJobBeingEdited(null);
+  };
+
+  const handleJobUpdate = (updatedJob: Job) => {
+    setJobs((prevJobs) =>
+      prevJobs.map((job) => (job.id === updatedJob.id ? updatedJob : job))
+    );
+    setJobBeingEdited(null);
+  };
 
   if (loading) return <div>Loading...</div>;
 
@@ -158,68 +176,75 @@ const EmployerHomepage: React.FC = () => {
       {activeTab === 'jobsPosted' && (
         <div className="grid gap-4">
           {paginatedJobs.length > 0 ? (
-            paginatedJobs.map((job) => (
-              <div
-                key={job.name}
-                className="p-4 bg-white shadow rounded-lg flex justify-between items-center transform transition-transform duration-300 cursor-pointer hover:scale-105"
-                onClick={() => handleJobClick(job)}
-              >
-                <div>
-                  <h2 className="text-lg font-semibold text-blue-600">
-                    {job.name}
-                  </h2>
-                  <p className="text-gray-600">{job.description}</p>
-                  <p className="text-gray-500">{job.location}</p>
-                  <p className="text-gray-400 text-sm">
-                    Posted on: {job.posted_at}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p>
-                    Work hours:{' '}
-                    <span className="text-blue-600">{job.work_hours}</span>
-                  </p>
-                  <p>
-                    Salary: <span className="text-blue-600">${job.salary}</span>
-                  </p>
-                  <p>
-                    Type:{' '}
-                    <span className="text-blue-600">{job.workplace_type}</span>
-                  </p>
-                  <div className="flex items-center justify-end space-x-2 mt-2">
-                    <FaEdit className="text-blue-500 cursor-pointer" />
-                    <FaTrashAlt className="text-red-500 cursor-pointer" />
-                  </div>
-                </div>
+        paginatedJobs.map((job) => (
+          <div
+            key={job.id}
+            className="p-4 bg-white shadow rounded-lg flex justify-between items-center transform transition-transform duration-300 cursor-pointer hover:scale-105"
+            onClick={() => handleJobClick(job)}
+          >
+            <div>
+              <h2 className="text-lg font-semibold text-blue-600">{job.name}</h2>
+              <p className="text-gray-600">{job.description}</p>
+              <p className="text-gray-500">{job.location}</p>
+              <p className="text-gray-400 text-sm">Posted on: {job.postedAt}</p>
+            </div>
+            <div className="text-right">
+              <p>
+                Work hours: <span className="text-blue-600">{job.workHours}</span>
+              </p>
+              <p>
+                Salary: <span className="text-blue-600">${job.salary}</span>
+              </p>
+              <p>
+                Type: <span className="text-blue-600">{job.workplaceType}</span>
+              </p>
+              <div className="flex items-center justify-end space-x-2 mt-2">
+                <FaEdit
+                  className="text-blue-500 cursor-pointer"
+                  onClick={(e) => handleEditClick(job, e)}
+                />
+                <FaTrashAlt className="text-red-500 cursor-pointer" />
               </div>
-            ))
-          ) : (
-            <p className="text-gray-500">No jobs found.</p>
-          )}
-          {/* Pagination Component */}
-          <div className="flex justify-center my-4 items-center text-gray-600">
-            <button
-              onClick={handlePreviousPage}
-              disabled={currentPage === 1}
-              className={`mr-2 ${
-                currentPage === 1 ? 'text-gray-400' : 'text-blue-500'
-              }`}
-            >
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className={`ml-2 ${
-                currentPage === totalPages ? 'text-gray-400' : 'text-blue-500'
-              }`}
-            >
-              Next
-            </button>
+            </div>
           </div>
+        ))
+      ) : (
+        <p className="text-gray-500">No jobs found.</p>
+      )}
+
+      {/* Pagination Component */}
+      <div className="flex justify-center my-4 items-center text-gray-600">
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className={`mr-2 ${
+            currentPage === 1 ? 'text-gray-400' : 'text-blue-500'
+          }`}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          className={`ml-2 ${
+            currentPage === totalPages ? 'text-gray-400' : 'text-blue-500'
+          }`}
+        >
+          Next
+        </button>
+      </div>
+
+      {/* Render the modal outside the map loop */}
+      {jobBeingEdited && (
+        <EditJobModalForm
+          job={jobBeingEdited}
+          onClose={handleModalClose}
+          onUpdate={handleJobUpdate}
+        />
+      )}
         </div>
       )}
 
@@ -256,16 +281,16 @@ const EmployerHomepage: React.FC = () => {
               <strong>Location:</strong> {selectedJob.location}
             </p>
             <p>
-              <strong>Posted At:</strong> {selectedJob.posted_at}
+              <strong>Posted At:</strong> {selectedJob.postedAt}
             </p>
             <p>
-              <strong>Work Hours:</strong> {selectedJob.work_hours}
+              <strong>Work Hours:</strong> {selectedJob.workHours}
             </p>
             <p>
               <strong>Salary:</strong> {selectedJob.salary}
             </p>
             <p>
-              <strong>Type:</strong> {selectedJob.workplace_type}
+              <strong>Type:</strong> {selectedJob.workplaceType}
             </p>
           </>
         )}
