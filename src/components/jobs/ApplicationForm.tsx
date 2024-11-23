@@ -1,3 +1,4 @@
+// This is where people will be applying for jobs
 import { useState } from 'react';
 import { X, Upload, Loader2 } from 'lucide-react';
 import { Job } from '../../types';
