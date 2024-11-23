@@ -1,7 +1,8 @@
+// This is the tile that appears if one where to click the sign up/ login if they are a new user or appears when someone scrolls down to the footer
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, Mail, Lock, User, Building, Briefcase } from 'lucide-react';
-import { useAuthStore } from '../../store/authStore';
+// import { useAuthStore } from '../../store/authStore';
 import { useEmployerJourney } from '../../hooks/useEmployerJourney';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,7 +14,9 @@ interface AuthModalProps {
 
 const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) => {
   const navigate = useNavigate();
+  // This function if user is new or doesn't have a token then will be asked to make an account
   const [view, setView] = useState<'login' | 'register' | 'user-type'>(initialView);
+  // This is the function that will run if the user has set their journey to either jobseeker or employer
   const [userType, setUserType] = useState<'jobseeker' | 'employer' | null>(null);
   const [formData, setFormData] = useState({
     email: '',
@@ -23,8 +26,10 @@ const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) =
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+  // This includes all the codes that will be required for the definition of user journey
   const { registerEmployer, loginEmployer, isLoading } = useEmployerJourney();
 
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -63,6 +68,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) =
           >
             <div className="relative">
               <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-6">
+                {/* This is the initial first part that occurs when someone is filling in the information  */}
                 <div className="flex justify-between items-center">
                   <h2 className="text-2xl font-bold text-white">
                     {view === 'login' ? 'Welcome Back' : 
@@ -89,8 +95,10 @@ const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) =
 
                 {view === 'user-type' ? (
                   <div className="space-y-4">
+                    {/* This contains the first code where users can say looking for work.  */}
                     <motion.button
                       whileHover={{ scale: 1.02 }}
+                      // Here is it he on click function that will take all the users who click it to the jobseeker side of the page
                       onClick={() => {
                         setUserType('jobseeker');
                         setView('register');
@@ -109,9 +117,11 @@ const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) =
                       <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600" />
                     </motion.button>
 
+                    {/* This is the second tile that contains the journey for employers. */}
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       onClick={() => {
+                        // This sets the state and how it should be acted upon
                         setUserType('employer');
                         setView('register');
                       }}
@@ -133,6 +143,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) =
                   <form onSubmit={handleSubmit} className="space-y-4">
                     {view === 'register' && (
                       <>
+                      {/* This div belongs to the full name on the register side*/}
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             Full Name
@@ -151,6 +162,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) =
                         </div>
 
                         {userType === 'employer' && (
+                          // This part is only visible to the employer signup where they enter the name of the company
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                               Company Name
@@ -171,6 +183,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) =
                       </>
                     )}
 
+                    {/* This is the email address part of the form */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Email Address
@@ -188,6 +201,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) =
                       </div>
                     </div>
 
+                    {/* This is the password spot for the code */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Password
@@ -205,6 +219,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) =
                       </div>
                     </div>
 
+                    {/* This is the confirm password spot for the code */}
                     {view === 'register' && (
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -235,6 +250,7 @@ const AuthModal = ({ isOpen, onClose, initialView = 'login' }: AuthModalProps) =
                 )}
 
                 {view !== 'user-type' && (
+                  // This is the final part of the code where people can decide either to change from signup to login
                   <div className="mt-6 text-center">
                     <p className="text-sm text-gray-600">
                       {view === 'login' ? (
