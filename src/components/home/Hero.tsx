@@ -32,7 +32,7 @@ const Hero = () => {
 		setLoading(true);
 		try {
 			const response = await fetch(
-				`api/job/search?query=${query}&location=${location}`
+				`http://localhost:5000/job/search?query=${query}&location=${location}`
 			);
 			const data = await response.json();
 			setJobs(data || []);
