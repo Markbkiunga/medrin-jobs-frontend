@@ -1,36 +1,41 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, Briefcase, User, Settings, LogOut } from 'lucide-react';
-import { useAuthStore } from '../store/authStore';
-import AuthModal from './auth/AuthModal';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, User, Settings, LogOut } from "lucide-react";
+import AuthModal from "./auth/AuthModal";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthState, logOut } from "../state";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user } = useSelector(
+    (state: { auth: AuthState }) => state.auth,
+  );
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const navigation = [
-    { name: 'Home', path: '/' },
-    { name: 'Find a job', path: '/jobs' },
-    { name: 'Employers', path: '/employers' },
-    { name: 'Blog', path: '/blog' },
-    { name: 'Pricing', path: '/pricing' },
-    { name: 'Contact', path: '/contact' }
+    { name: "Home", path: "/" },
+    { name: "Find a job", path: "/jobs" },
+    { name: "Employers", path: "/employers" },
+    { name: "Blog", path: "/blog" },
+    { name: "Pricing", path: "/pricing" },
+    { name: "Contact", path: "/contact" },
   ];
 
   const handlePostJob = () => {
     if (!isAuthenticated) {
       setShowAuthModal(true);
     } else {
-      navigate('/employer/post-job');
+      navigate("/employer/post-job");
     }
   };
 
   const handleLogout = () => {
-    logout();
-    navigate('/');
+    dispatch(logOut());
+    localStorage.clear();
+    navigate("/");
   };
 
   return (
@@ -40,10 +45,12 @@ const Navbar = () => {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
-                <Briefcase className="h-8 w-8 text-blue-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block">Medrin Jobs</span>
+                <img src="/logo.jpg" className="h-12 w-12" alt="" />
+                {/* <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block"> */}
+                {/*   Medrin Jobs */}
+                {/* </span> */}
               </Link>
-              
+
               <div className="hidden md:ml-8 md:flex md:space-x-4">
                 {navigation.map((item) => (
                   <Link
@@ -67,10 +74,10 @@ const Navbar = () => {
                     <User className="h-5 w-5" />
                     <span className="hidden lg:block">{user?.name}</span>
                   </button>
-                  
+
                   {showProfileMenu && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                      {user?.type === 'employer' && (
+                      {user?.role === "employer" && (
                         <>
                           <Link
                             to="/employer/dashboard"
@@ -124,7 +131,11 @@ const Navbar = () => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="text-gray-700 hover:text-blue-600 p-2"
               >
-                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {isOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
               </button>
             </div>
           </div>
@@ -146,7 +157,7 @@ const Navbar = () => {
               ))}
               {isAuthenticated ? (
                 <>
-                  {user?.type === 'employer' && (
+                  {user?.role === "employer" && (
                     <>
                       <Link
                         to="/employer/dashboard"
@@ -202,10 +213,11 @@ const Navbar = () => {
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        initialView={isAuthenticated ? 'login' : 'user-type'}
+        initialView={isAuthenticated ? "login" : "user-type"}
       />
     </>
   );
 };
 
 export default Navbar;
+
