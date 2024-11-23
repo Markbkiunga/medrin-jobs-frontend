@@ -17,7 +17,7 @@ const Hero = () => {
     setLoading(true);
     const fetchJobs = async () => {
       try {
-        const response = await fetch("/api/job");
+        const response = await fetch("http://localhost:5000/job");
         const data = await response.json();
         setJobsAmount(data.length || []);
       } catch (error) {
