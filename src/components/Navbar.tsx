@@ -1,25 +1,29 @@
 // This is the component that hold all the code in the navbar
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, Briefcase, User, Settings, LogOut } from 'lucide-react';
-import { useAuthStore } from '../store/authStore';
-import AuthModal from './auth/AuthModal';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, User, Settings, LogOut } from "lucide-react";
+import AuthModal from "./auth/AuthModal";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthState, logOut } from "../state";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, user } = useSelector(
+    (state: { auth: AuthState }) => state.auth,
+  );
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // This is the definition of where the named endpoint if the words are clicked
   const navigation = [
-    { name: 'Home', path: '/' },
-    { name: 'Find a job', path: '/jobs' },
-    { name: 'Employers', path: '/employers' },
-    { name: 'Blog', path: '/blog' },
-    { name: 'Pricing', path: '/pricing' },
-    { name: 'Contact', path: '/contact' }
+    { name: "Home", path: "/" },
+    { name: "Find a job", path: "/jobs" },
+    { name: "Employers", path: "/employers" },
+    { name: "Blog", path: "/blog" },
+    { name: "Pricing", path: "/pricing" },
+    { name: "Contact", path: "/contact" },
   ];
 
   // For this part we saw it fit to actually write the function to be executed when someone the butto
@@ -27,14 +31,15 @@ const Navbar = () => {
     if (!isAuthenticated) {
       setShowAuthModal(true);
     } else {
-      navigate('/employer/post-job');
+      navigate("/employer/post-job");
     }
   };
 
   // Handle logout will only appear of someone has logged in
   const handleLogout = () => {
-    logout();
-    navigate('/');
+    dispatch(logOut());
+    localStorage.clear();
+    navigate("/");
   };
 
   return (
@@ -45,10 +50,12 @@ const Navbar = () => {
             {/* This is the first part of the nav component from the left */}
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
-                <Briefcase className="h-8 w-8 text-blue-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block">Medrin Jobs</span>
+                <img src="/logo.jpg" className="h-12 w-12" alt="" />
+                {/* <span className="ml-2 text-xl font-bold text-gray-900 hidden sm:block"> */}
+                {/*   Medrin Jobs */}
+                {/* </span> */}
               </Link>
-              
+
               <div className="hidden md:ml-8 md:flex md:space-x-4">
                 {navigation.map((item) => (
                   // The link here is for those who wish to click for easy change of homepage
@@ -75,11 +82,11 @@ const Navbar = () => {
                     <User className="h-5 w-5" />
                     <span className="hidden lg:block">{user?.name}</span>
                   </button>
-                  
+
                   {showProfileMenu && (
                     // THis will be only showing when the user is signed in and the user is an employer
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                      {user?.type === 'employer' && (
+                      {user?.role === "employer" && (
                         <>
                           <Link
                             to="/employer/dashboard"
@@ -135,7 +142,11 @@ const Navbar = () => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="text-gray-700 hover:text-blue-600 p-2"
               >
-                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {isOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
               </button>
             </div>
           </div>
@@ -157,7 +168,7 @@ const Navbar = () => {
               ))}
               {isAuthenticated ? (
                 <>
-                  {user?.type === 'employer' && (
+                  {user?.role === "employer" && (
                     <>
                       <Link
                         to="/employer/dashboard"
@@ -213,10 +224,11 @@ const Navbar = () => {
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        initialView={isAuthenticated ? 'login' : 'user-type'}
+        initialView={isAuthenticated ? "login" : "user-type"}
       />
     </>
   );
 };
 
 export default Navbar;
+
