@@ -14,11 +14,11 @@ import {
   LogOut
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useAuthStore } from '../../store/authStore';
+// import { useAuthStore } from '../../store/authStore';
 
 const AdminSidebar = () => {
   const location = useLocation();
-  const { logout } = useAuthStore();
+  // const { logout } = useAuthStore();
   const [showUserSubmenu, setShowUserSubmenu] = useState(false);
 
   const menuItems = [
