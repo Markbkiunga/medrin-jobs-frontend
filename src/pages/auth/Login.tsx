@@ -47,7 +47,7 @@ const Login = () => {
             id: userData.id,
             email: userData.email,
             name: userData.name,
-            role: userData.role,
+            role: userData.role.toLowerCase(),
             image: userData.image,
             isVerified: userData.isVerified,
           },
