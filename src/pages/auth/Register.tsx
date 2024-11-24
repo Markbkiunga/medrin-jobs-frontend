@@ -272,6 +272,7 @@ const Register = () => {
               {/* Submit Button */}
               <Button
                 type="submit"
+                onClick={handleSubmit}
                 disabled={isLoading}
                 className="w-full bg-blue-700 hover:bg-blue-800"
               >
