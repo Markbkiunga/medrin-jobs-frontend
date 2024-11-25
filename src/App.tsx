@@ -1,6 +1,11 @@
+/** @format */
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -38,136 +43,163 @@ import Profile from "./pages/jobseeker/Profile";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminAccessButton from "./components/AdminAccessButton";
 
+// Your Stripe public key
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
+
 function App() {
-  return (
-    <Router>
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-grow pt-16">
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/jobs" element={<Jobs />} />
-            <Route path="/jobs/categories/:slug" element={<CategoryJobs />} />
-            <Route path="/employers" element={<Employers />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:id" element={<BlogPost />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+	return (
+		<Router>
+			<div className='min-h-screen flex flex-col'>
+				<Navbar />
+				<main className='flex-grow pt-16'>
+					<Elements stripe={stripePromise}>
+						<Routes>
+							{/* Public Routes */}
+							<Route path='/' element={<Home />} />
+							<Route path='/jobs' element={<Jobs />} />
+							<Route
+								path='/jobs/categories/:slug'
+								element={<CategoryJobs />}
+							/>
+							<Route path='/employers' element={<Employers />} />
+							<Route path='/contact' element={<Contact />} />
+							<Route path='/pricing' element={<Pricing />} />
+							<Route path='/about' element={<About />} />
+							<Route path='/privacy' element={<Privacy />} />
+							<Route path='/terms' element={<Terms />} />
+							<Route path='/faq' element={<FAQ />} />
+							<Route path='/blog' element={<Blog />} />
+							<Route path='/blog/:id' element={<BlogPost />} />
+							<Route path='/login' element={<Login />} />
+							<Route path='/register' element={<Register />} />
 
-            {/* Protected Admin Routes */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute userType="admin">
-                  <AdminLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<AdminDashboard />} />
-              <Route path="jobs" element={<AdminJobs />} />
-              <Route path="users/jobseekers" element={<AdminJobSeekers />} />
-              <Route path="users/employers" element={<AdminEmployers />} />
-              <Route path="users/admins" element={<AdminUsers />} />
-              <Route path="payments" element={<AdminPayments />} />
-              <Route path="featured" element={<AdminFeatured />} />
-              <Route path="banned" element={<AdminBanned />} />
-              <Route path="settings" element={<AdminSettings />} />
-            </Route>
+							{/* Protected Admin Routes */}
+							<Route
+								path='/admin'
+								element={
+									<ProtectedRoute userType='admin'>
+										<AdminLayout />
+									</ProtectedRoute>
+								}>
+								<Route index element={<AdminDashboard />} />
+								<Route path='jobs' element={<AdminJobs />} />
+								<Route
+									path='users/jobseekers'
+									element={<AdminJobSeekers />}
+								/>
+								<Route
+									path='users/employers'
+									element={<AdminEmployers />}
+								/>
+								<Route
+									path='users/admins'
+									element={<AdminUsers />}
+								/>
+								<Route
+									path='payments'
+									element={<AdminPayments />}
+								/>
+								<Route
+									path='featured'
+									element={<AdminFeatured />}
+								/>
+								<Route
+									path='banned'
+									element={<AdminBanned />}
+								/>
+								<Route
+									path='settings'
+									element={<AdminSettings />}
+								/>
+							</Route>
 
-            {/* Protected Employer Routes */}
-            <Route
-              path="/employer/post-job"
-              element={
-                <ProtectedRoute userType="employer">
-                  <PostJob />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/employer/dashboard"
-              element={
-                <ProtectedRoute userType="employer">
-                  <EmployerDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/employer/jobs"
-              element={
-                <ProtectedRoute userType="employer">
-                  <EmployerJobs />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/employer/settings"
-              element={
-                <ProtectedRoute userType="employer">
-                  <EmployerSettings />
-                </ProtectedRoute>
-              }
-            />
+							{/* Protected Employer Routes */}
+							<Route
+								path='/employer/post-job'
+								element={
+									<ProtectedRoute userType='employer'>
+										<PostJob />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path='/employer/dashboard'
+								element={
+									<ProtectedRoute userType='employer'>
+										<EmployerDashboard />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path='/employer/jobs'
+								element={
+									<ProtectedRoute userType='employer'>
+										<EmployerJobs />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path='/employer/settings'
+								element={
+									<ProtectedRoute userType='employer'>
+										<EmployerSettings />
+									</ProtectedRoute>
+								}
+							/>
 
-            {/* Protected Job Seeker Routes */}
-            <Route
-              path="/jobseeker/dashboard"
-              element={
-                <ProtectedRoute userType="jobseeker">
-                  <JobSeekerDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jobseeker/applications"
-              element={
-                <ProtectedRoute userType="jobseeker">
-                  <Applications />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jobseeker/saved"
-              element={
-                <ProtectedRoute userType="jobseeker">
-                  <SavedJobs />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jobseeker/profile"
-              element={
-                <ProtectedRoute userType="jobseeker">
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </main>
-        <Footer />
-        <AdminAccessButton />
-      </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-    </Router>
-  );
+							{/* Protected Job Seeker Routes */}
+							<Route
+								path='/jobseeker/dashboard'
+								element={
+									<ProtectedRoute userType='jobseeker'>
+										<JobSeekerDashboard />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path='/jobseeker/applications'
+								element={
+									<ProtectedRoute userType='jobseeker'>
+										<Applications />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path='/jobseeker/saved'
+								element={
+									<ProtectedRoute userType='jobseeker'>
+										<SavedJobs />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path='/jobseeker/profile'
+								element={
+									<ProtectedRoute userType='jobseeker'>
+										<Profile />
+									</ProtectedRoute>
+								}
+							/>
+						</Routes>
+					</Elements>
+				</main>
+				<Footer />
+				<AdminAccessButton />
+			</div>
+			<ToastContainer
+				position='top-right'
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme='light'
+			/>
+		</Router>
+	);
 }
 
 export default App;
-

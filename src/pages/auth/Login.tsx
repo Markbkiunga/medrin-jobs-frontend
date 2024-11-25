@@ -40,7 +40,7 @@ const Login = () => {
       const response = await login(data).unwrap();
 
       const { userData, accessToken } = response;
-
+  localStorage.setItem("accessToken", accessToken);
       dispatch(
         setCredentials({
           user: {
