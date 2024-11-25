@@ -9,9 +9,15 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ["lucide-react"],
   },
+  
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      external: ['@stripe/react-stripe-js'],
+    }
+  }
 });
