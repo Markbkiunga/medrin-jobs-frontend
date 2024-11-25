@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { useLoginMutation, useRegisterMutation } from "../../state/api";
 import { AuthState, setCredentials } from "@/state";
 import {
@@ -26,6 +27,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import VerificationDialog from "../modals/VerificationDialog";
+import { Bounce, toast } from "react-toastify";
 
 // Validation schemas
 const loginSchema = z.object({
@@ -80,9 +82,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
   );
   const [isVerificationDialogOpen, setIsVerificationDialogOpen] =
     useState(false);
-  const { user } = useSelector((state: { auth: AuthState }) => state.auth);
 
-  const [apiError, setApiError] = useState<string | null>(null); // State to store API errors
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [registerErrorMessage, setRegisterErrorMessage] = useState<
+    string | null
+  >(null);
+  const { user } = useSelector((state: { auth: AuthState }) => state.auth);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -102,14 +107,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
   });
 
   const handleLogin = async (data: LoginFormValues) => {
-    setApiError(null); // Reset the API error state
     try {
       const response = await login({
         email: data.email,
         password: data.password,
       }).unwrap();
 
-      console.log("Login successful:", response);
       const { userData, accessToken } = response;
 
       dispatch(
@@ -122,17 +125,18 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
       navigate(userData.role === "admin" ? "/admin" : "/dashboard");
       onClose();
-    } catch (error: any) {
-      console.error("Login failed:", error);
-      setApiError(
-        error.data?.message ||
-          "An unexpected error occurred. Please try again.",
-      ); // Set API error message
+      setLoginError(null); // Clear login error on success
+    } catch (err) {
+      if (isFetchBaseQueryError(err)) {
+        const serverError = err.data as { error: string };
+        setLoginError(serverError.error || "Login failed. Please try again.");
+      } else {
+        setLoginError("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
   const handleRegister = async (data: RegisterFormValues) => {
-    setApiError(null); // Reset the API error state
     try {
       const response = await register({
         email: data.email,
@@ -142,7 +146,20 @@ const AuthModal: React.FC<AuthModalProps> = ({
         role: data.role,
       }).unwrap();
 
-      console.log("Registration successful:", response);
+      setRegisterErrorMessage(null); // Clear register error on success
+
+      toast.success("Registration was successful!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
       const { userData, accessToken } = response;
 
       dispatch(
@@ -153,19 +170,30 @@ const AuthModal: React.FC<AuthModalProps> = ({
         }),
       );
 
-      // Open VerificationDialog
       setIsVerificationDialogOpen(true);
-
-      // Optional: Close AuthModal
       onClose();
-    } catch (error: any) {
-      console.error("Registration failed:", error);
-      setApiError(
-        error.data?.message ||
+    } catch (err) {
+      if (isFetchBaseQueryError(err)) {
+        const serverError = err.data as { error: string };
+        setRegisterErrorMessage(
+          serverError.error || "Registration failed. Please try again.",
+        );
+      } else {
+        setRegisterErrorMessage(
           "An unexpected error occurred. Please try again.",
-      ); // Set API error message
+        );
+      }
     }
   };
+
+  function isFetchBaseQueryError(error: unknown): error is FetchBaseQueryError {
+    return (
+      typeof error === "object" &&
+      error != null &&
+      "status" in error &&
+      "data" in error
+    );
+  }
 
   return (
     <>
@@ -176,7 +204,14 @@ const AuthModal: React.FC<AuthModalProps> = ({
               {authMode === "login" ? "Sign In" : "Register"}
             </DialogTitle>
           </DialogHeader>
-          {apiError && <p className="text-sm text-red-600 mb-4">{apiError}</p>}
+
+          {loginError && authMode === "login" && (
+            <p className="text-red-500">{loginError}</p>
+          )}
+
+          {registerErrorMessage && authMode === "register" && (
+            <p className="text-red-500">{registerErrorMessage}</p>
+          )}
 
           <form
             onSubmit={handleSubmit(
@@ -274,7 +309,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             )}
 
             <Button
-              className="bg-blue-700"
+              className="bg-blue-600 hover:bg-blue-700"
               type="submit"
               disabled={isLoggingIn || isRegistering}
             >
@@ -295,6 +330,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                   onClick={() => {
                     setAuthMode("register");
                     reset();
+                    setLoginError(null); // Clear login error
                   }}
                 >
                   Register
@@ -308,6 +344,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                   onClick={() => {
                     setAuthMode("login");
                     reset();
+                    setRegisterErrorMessage(null); // Clear register error
                   }}
                 >
                   Sign In
