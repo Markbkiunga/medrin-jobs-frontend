@@ -6,6 +6,7 @@ import { X, CreditCard, Phone } from "lucide-react";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { paymentService } from "../../services/paymentService"; // Adjust the import as needed
 import axios from "axios";
+import { Bounce, toast } from "react-toastify";
 
 interface PaymentModalProps {
 	isOpen: boolean;
@@ -39,22 +40,26 @@ const PaymentModal = ({
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-
-		        if (!stripe || !elements) {
-					alert("Stripe is not loaded!");
+		setLoading(true);
+		try {
+			if (paymentMethod === "card") {
+			if (!stripe || !elements) {
+				alert("Stripe is not loaded!");
 					return;
-				}
+			}
+		       
+					
+				
 
 				const cardElement = elements.getElement(CardElement);
 				if (!cardElement) {
-					alert("CardElement is not initialized!");
+					toast.error("CardElement is not initialized!");
 					return;
 		}
-		setLoading(true);
-		if (paymentMethod === "card") {
-			if (!stripe || !elements) return; 
+		
+ 
 
-			try {
+			
 				const { paymentMethod, error } =
 					await stripe.createPaymentMethod({
 						type: "card",
@@ -64,53 +69,102 @@ const PaymentModal = ({
 					alert(error.message || "Payment method creation failed.");
 					return;
 				}
+								const paymentResponse =
+									await paymentService.processCardPayment(
+										parseFloat(amount),
+										currency
+									);
+				const accessToken = paymentResponse.accessToken;
 				const response = await axios.post("http://127.0.0.1:5000/subscription/create-subscription", {
 					paymentMethodId: paymentMethod?.id,
-					plan: planName, 
+					plan: planName,
+					
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+						"Content-Type": "application/json",
+					},
 				});
 
-				alert(response.data.message || "Payment successful!");
+				toast.success("Payment was successful!", {
+					position: "top-right",
+					autoClose: 5000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+					transition: Bounce,
+				});
 
-				const paymentResponse = await paymentService.processCardPayment(
-					parseFloat(amount),
-					currency,
+
+
+				
+if (paymentResponse.clientSecret) {
+	 await stripe.confirmCardPayment(
+		paymentResponse.clientSecret,
+		{
+			payment_method: paymentMethod.id,
+		}
+		
+	);
+} else {
+	console.error("Payment response missing clientSecret.", paymentResponse);
+}
+
+				try {
 					
-				);
-  const confirmPayment = await stripe.confirmCardPayment(clientSecret, {
-		payment_method: paymentMethod.id,
-  });
+				
 				if (paymentResponse.success) {
-					alert(
+					console.log(
 						"Payment successful! Transaction ID: " +
 							paymentResponse.transactionId
 					);
 					onClose(); 
 				} else {
-					alert(paymentResponse.message);
+					toast.success(paymentResponse.message);
 				}
 			} catch (error) {
 				console.error("Error processing card payment:", error);
-				alert("Error processing card payment.");
+				toast.error("Error processing card payment.");
 			}
 		} else if (paymentMethod === "mpesa") {
 			try {
 				const paymentResponse =
 					await paymentService.initiateMpesaPayment(
 						phoneNumber,
-						amount
+						planName
 					);
 
 				if (paymentResponse.success) {
-					alert(paymentResponse.message);
+					toast.success(paymentResponse.message, {
+						position: "top-right",
+						autoClose: 5000,
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "light",
+						transition: Bounce,
+					});
 					onClose(); // Close modal on success
 				} else {
-					alert(paymentResponse.message);
+					toast.error(paymentResponse.message);
 				}
 			} catch (error) {
 				console.error("Error processing M-Pesa payment:", error);
-				alert("Error processing M-Pesa payment.");
+				toast.error("Error processing M-Pesa payment.");
 			}
 		}
+	} catch (error) {
+		console.error("Error processing payment:", error);
+		toast.error("Error processing payment.");
+	} finally {
+		setLoading(false);
+	}
 	};
 
 	return (
