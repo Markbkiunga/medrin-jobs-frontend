@@ -1,3 +1,4 @@
+// This is the component that hold all the code in the navbar
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, User, Settings, LogOut } from "lucide-react";
@@ -10,11 +11,12 @@ const Navbar = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const { isAuthenticated, user } = useSelector(
-    (state: { auth: AuthState }) => state.auth,
+    (state: { auth: AuthState }) => state.auth
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // This is the definition of where the named endpoint if the words are clicked
   const navigation = [
     { name: "Home", path: "/" },
     { name: "Find a job", path: "/jobs" },
@@ -24,6 +26,7 @@ const Navbar = () => {
     { name: "Contact", path: "/contact" },
   ];
 
+  // For this part we saw it fit to actually write the function to be executed when someone the butto
   const handlePostJob = () => {
     if (!isAuthenticated) {
       setShowAuthModal(true);
@@ -32,6 +35,7 @@ const Navbar = () => {
     }
   };
 
+  // Handle logout will only appear of someone has logged in
   const handleLogout = () => {
     dispatch(logOut());
     localStorage.clear();
@@ -43,6 +47,7 @@ const Navbar = () => {
       <nav className="bg-white shadow-sm fixed w-full z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
+            {/* This is the first part of the nav component from the left */}
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
                 <img src="/logo.jpg" className="h-12 w-12" alt="" />
@@ -52,26 +57,22 @@ const Navbar = () => {
               </Link>
 
               <div className="hidden md:ml-8 md:flex md:space-x-4">
-                {navigation
-                  .filter(
-                    (item) =>
-                      item.name !== "Employers" && item.name !== "Pricing",
-                  )
-                  .map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.path}
-                      className="text-gray-700 hover:text-blue-600 px-3 py-2"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className="text-gray-700 hover:text-blue-600 px-3 py-2"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
               </div>
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
               {isAuthenticated ? (
                 <div className="relative">
+                  {/* This button will only appear if the user is logged in such that it displays the name of the user and gives some initial functionality */}
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
                     className="flex items-center space-x-2 text-gray-700 hover:text-blue-600"
@@ -81,6 +82,7 @@ const Navbar = () => {
                   </button>
 
                   {showProfileMenu && (
+                    // THis will be only showing when the user is signed in and the user is an employer
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                       <>
                         <Link
@@ -114,6 +116,7 @@ const Navbar = () => {
                   )}
                 </div>
               ) : (
+                // This button appears only when the user has not siged up
                 <button
                   onClick={() => setShowAuthModal(true)}
                   className="text-gray-700 hover:text-blue-600 px-4 py-2"
@@ -147,7 +150,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* This is the mobile presentation of how it would look like on mobile view if run app is run from a mobile device*/}
         {isOpen && (
           <div className="md:hidden fixed inset-0 top-16 bg-white z-40 overflow-y-auto">
             <div className="px-2 pt-2 pb-3 space-y-1">

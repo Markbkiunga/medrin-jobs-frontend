@@ -1,3 +1,4 @@
+// This is the first part of the of the landing page
 import { Search, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { use } from 'framer-motion/client';
