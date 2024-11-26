@@ -11,7 +11,7 @@ const Navbar = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const { isAuthenticated, user } = useSelector(
-    (state: { auth: AuthState }) => state.auth,
+    (state: { auth: AuthState }) => state.auth
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -57,20 +57,15 @@ const Navbar = () => {
               </Link>
 
               <div className="hidden md:ml-8 md:flex md:space-x-4">
-                {navigation
-                  .filter(
-                    (item) =>
-                      item.name !== "Employers" && item.name !== "Pricing",
-                  )
-                  .map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.path}
-                      className="text-gray-700 hover:text-blue-600 px-3 py-2"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className="text-gray-700 hover:text-blue-600 px-3 py-2"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
               </div>
             </div>
 
