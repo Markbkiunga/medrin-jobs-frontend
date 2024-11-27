@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Save } from 'lucide-react';
 import { employerService } from '../../services/mockEmployerService';
+import axios from 'axios';
 
 const EmployerSettings = () => {
   const employer = employerService.getCurrentUser();
@@ -12,14 +13,40 @@ const EmployerSettings = () => {
     website: '',
     industry: '',
     companySize: '',
-    location: ''
+    companyLocation: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle settings update
-    console.log('Settings updated:', formData);
+    try {
+      const authData = JSON.parse(localStorage.getItem("persist:auth") || "{}");
+      const token = authData.auth ? JSON.parse(authData.auth)?.token : null;
+  
+      if (!token) {
+        throw new Error("Authentication token is missing.");
+      }
+      const response = await axios.put(
+        "http://127.0.0.1:5000/employer/update-details",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        console.log("Profile updated successfully!");
+      } else {
+        console.error("Failed to update profile.");
+    }
+    } catch (error: any) {
+      console.error("Error updating profile:", error.message);
+    }
   };
+  
+
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -133,8 +160,8 @@ const EmployerSettings = () => {
               </label>
               <input
                 type="text"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                value={formData.companyLocation}
+                onChange={(e) => setFormData({ ...formData, companyLocation: e.target.value })}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
