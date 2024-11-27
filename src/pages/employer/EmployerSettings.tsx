@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 import { employerService } from '../../services/mockEmployerService';
 import axios from 'axios';
@@ -15,7 +15,40 @@ const EmployerSettings = () => {
     companySize: '',
     companyLocation: ''
   });
+  useEffect(() => {
+    // Fetch user data when the component mounts
+    const fetchUserData = async () => {
+      try {
+        const authData = JSON.parse(localStorage.getItem("persist:auth") || "{}");
+        const token = authData.auth ? JSON.parse(authData.auth)?.token : null;
+    
+        if (!token) {
+          throw new Error("Authentication token is missing.");
+        }
+        const response = await axios.get("http://127.0.0.1:5000/employer/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setFormData({
+          name: response.data.name,
+          email: response.data.email,
+          company: response.data.company,
+          phone: response.data.phone,
+          website: response.data.website,
+          industry: response.data.industry,
+          companySize: response.data.companySize,
+          companyLocation: response.data.companyLocation
+        });
+        console.log(response)
+      } catch (error) {
+        
+        console.error("Error fetching user data:", error);
+      }
+    };
 
+    fetchUserData();
+  }, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
