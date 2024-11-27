@@ -99,7 +99,7 @@ const Navbar = () => {
                         </Link>
                       </>
                       <Link
-                        to="/settings"
+                        to="employer/settings"
                         className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                       >
                         <Settings className="h-4 w-4 inline mr-2" />
