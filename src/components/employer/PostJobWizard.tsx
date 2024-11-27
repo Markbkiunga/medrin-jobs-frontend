@@ -5,15 +5,17 @@ import ApplicationProcessForm from './forms/ApplicationProcessForm';
 import ReviewSubmit from './forms/ReviewSubmit';
 import WizardProgress from './WizardProgress';
 import { JobPostingData } from '../../types/employer';
-import Swal from 'sweetalert2';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
 
 const PostJobWizard = () => {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [jobData, setJobData] = useState<JobPostingData>({
     title: '',
+description: '',
     company: '',
-    description: '',
     requirements: [],
     location: '',
     salaryRange: { min: '', max: '' },
@@ -33,34 +35,35 @@ const PostJobWizard = () => {
     setStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = async () => {
-		
+  const handleSubmit = async  (data: JobPostingData, ) => {
+
 		setIsLoading(true);
 		try {
+      const authData = JSON.parse(localStorage.getItem("persist:auth") || "{}");
+      const token = authData.auth ? JSON.parse(authData.auth)?.token : null;
+  
+      if (!token) {
+        throw new Error("Authentication token is missing.");
+      }
 			
-			const response = await fetch("/api/job/postJob", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
+      const response = await axios.post("http://127.0.0.1:5000/job/postJob", 
+        jobData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        credentials: "include",
-				body: JSON.stringify(jobData),
-			});
+      });
 
-			if (!response.ok) {
-				const errorData = await response.json();
+			if (!response.data) {
+				const errorData = await response.data.json();
 				throw new Error(errorData.error || "Failed to post job.");
 			}
 
-			const data = await response.json();
-
+			const data = await response.data
+console.log(data)
       if (response.status === 201) {
-        Swal.fire({
-          title: "Success!",
-          text: data.message || "Your job has been posted successfully.",
-          icon: "success",
-          confirmButtonText: "Okay",
-        });
+      toast.success("Job posted successfully!");
       
       }
 
@@ -81,16 +84,21 @@ const PostJobWizard = () => {
 				category: "",
 			});
 		} catch (error: any) {
-			// Show error alert using SweetAlert2
-			Swal.fire({
-				title: "Error!",
-				text:
-					error.message || "An error occurred while posting the job.",
-				icon: "error",
-				confirmButtonText: "Retry",
-			});
+      if (error.response) {
+     
+        console.error("Error response:", error.response);
+        toast.error(error.response.data.error || "Failed to post job.");
+      } else if (error.request) {
+        
+        console.error("No response received:", error.request);
+        toast.error("No response from server. Please try again.");
+      } else {
+      
+        console.error("Error during job submission:", error.message);
+        toast.error(error.message || "Something went wrong.");
+      }
+      
 		} finally {
-			// Reset loading state
 			setIsLoading(false);
 		}
   };
