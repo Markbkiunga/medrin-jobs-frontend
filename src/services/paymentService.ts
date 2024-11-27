@@ -24,7 +24,7 @@ class PaymentService {
 	}
 	private async getAccessToken(): Promise<string | null> {
 		if (this.accessToken) {
-			// Return the token if it's already set
+			
 			return this.accessToken;
 		}
 
