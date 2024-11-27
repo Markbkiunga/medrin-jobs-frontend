@@ -7,6 +7,7 @@ const mockJobs: JobPostingData[] = [
   {
     title: 'Senior React Developer',
     company: 'Tech Corp',
+    category: 'development',
     description: 'We are looking for an experienced React developer...',
     requirements: ['5+ years experience', 'Strong TypeScript skills'],
     location: 'Remote',
