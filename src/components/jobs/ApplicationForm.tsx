@@ -29,6 +29,7 @@ const ApplicationForm = ({ job, onClose }: ApplicationFormProps) => {
     
     // Show success message and close
     alert('Application submitted successfully!');
+    console.log(formData)
     setIsSubmitting(false);
     onClose();
   };
