@@ -1,31 +1,51 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Filter } from 'lucide-react';
+import { Plus, Search, Filter, Trophy } from 'lucide-react';
 import { JobPostingData } from '../../types/employer';
+import axios from 'axios';
 
-const mockJobs: JobPostingData[] = [
-  {
-    title: 'Senior React Developer',
-    company: 'Tech Corp',
-    category: 'development',
-    description: 'We are looking for an experienced React developer...',
-    requirements: ['5+ years experience', 'Strong TypeScript skills'],
-    location: 'Remote',
-    salaryRange: { min: '100000', max: '150000' },
-    employmentType: 'full-time',
-    applicationDeadline: '2024-04-15',
-    applicationInstructions: 'Apply with resume and cover letter',
-    requiredDocuments: ['Resume', 'Cover Letter'],
-    status: 'published'
-  },
-  // Add more mock jobs as needed
-];
+
+
 
 const EmployerJobs = () => {
   const navigate = useNavigate();
-  const [jobs, setJobs] = useState<JobPostingData[]>(mockJobs);
+  const [jobs, setJobs] = useState<JobPostingData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft' | 'closed'>('all');
+
+  useEffect(() => {
+    		const authData = JSON.parse(
+				localStorage.getItem("persist:auth") || "{}"
+			);
+			const token = authData.auth
+				? JSON.parse(authData.auth)?.token
+				: null;
+
+			if (!token) {
+				throw new Error("Authentication token is missing.");
+			}
+const fetchJobs = async () => {
+  try {
+				const response = await axios.get(
+					"http://127.0.0.1:5000/job/getJobByUserId",
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
+				);
+
+				if (response.status === 200) {
+					setJobs(response.data);
+				}
+
+				console.log(response.data);
+  } catch (error) {
+    console.error("Error fetching jobs data:", error);
+  }
+}
+    fetchJobs()
+   }, []);
 
   const filteredJobs = jobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -85,13 +105,13 @@ const EmployerJobs = () => {
                 <h3 className="text-lg font-semibold text-gray-900">{job.title}</h3>
                 <p className="text-gray-600">{job.company}</p>
               </div>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+              {/* <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                 job.status === 'published' ? 'bg-green-100 text-green-800' :
                 job.status === 'draft' ? 'bg-gray-100 text-gray-800' :
                 'bg-red-100 text-red-800'
               }`}>
                 {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
-              </span>
+              </span> */}
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-4">

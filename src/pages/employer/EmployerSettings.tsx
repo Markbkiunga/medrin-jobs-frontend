@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
-import { employerService } from '../../services/mockEmployerService';
+// import { employerService } from '../../services/mockEmployerService';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setEmployerData } from '@/state/employerSlice';
 
 const EmployerSettings = () => {
-  const employer = employerService.getCurrentUser();
+
+  const dispatch =useDispatch()
+  // const employer = employerService.getCurrentUser();
   const [formData, setFormData] = useState({
-    name: employer?.name || '',
-    email: employer?.email || '',
-    company: employer?.company || '',
-    phone: '',
-    website: '',
+    name:  '',
+    email: '',
+    companyName: '',
+    phoneNumber: '',
+    companyWebsite: '',
     industry: '',
     companySize: '',
     companyLocation: ''
@@ -25,22 +30,25 @@ const EmployerSettings = () => {
         if (!token) {
           throw new Error("Authentication token is missing.");
         }
+        console.log(token)
         const response = await axios.get("http://127.0.0.1:5000/employer/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        
         setFormData({
           name: response.data.name,
           email: response.data.email,
-          company: response.data.company,
-          phone: response.data.phone,
-          website: response.data.website,
+          companyName: response.data.companyName,
+          phoneNumber: response.data.phoneNumber,
+          companyWebsite: response.data.companyWebsite,
           industry: response.data.industry,
           companySize: response.data.companySize,
           companyLocation: response.data.companyLocation
         });
-        console.log(response)
+        dispatch(setEmployerData(response.data));
+        console.log(response.data)
       } catch (error) {
         
         console.error("Error fetching user data:", error);
@@ -70,7 +78,7 @@ const EmployerSettings = () => {
       );
   
       if (response.status === 200) {
-        console.log("Profile updated successfully!");
+        toast.success("Profile updated successfully!");
       } else {
         console.error("Failed to update profile.");
     }
@@ -126,8 +134,8 @@ const EmployerSettings = () => {
               </label>
               <input
                 type="text"
-                value={formData.company}
-                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                value={formData.companyName}
+                onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -137,8 +145,8 @@ const EmployerSettings = () => {
               </label>
               <input
                 type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                value={formData.phoneNumber}
+                onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -148,8 +156,9 @@ const EmployerSettings = () => {
               </label>
               <input
                 type="url"
-                value={formData.website}
-                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                value={formData.companyWebsite}
+                placeholder='https://www.example.com'
+                onChange={(e) => setFormData({ ...formData, companyWebsite: e.target.value })}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
