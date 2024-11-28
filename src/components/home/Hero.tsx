@@ -19,7 +19,7 @@ const Hero = () => {
 		const fetchJobs = async () => {
 			try {
 				const response = await fetch(
-					"https://medrin-jobs-backend-nn38.onrender.comcalhost:5000/job"
+					"https://medrin-jobs-backend-nn38.onrender.com/job"
 				);
 				const data = await response.json();
 				setJobsAmount(data.length || []);
