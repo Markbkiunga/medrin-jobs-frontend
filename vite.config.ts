@@ -18,8 +18,15 @@ export default defineConfig({
 		},
 	},
 	build: {
+		chunkSizeWarningLimit: 1200,
 		rollupOptions: {
 			external: ["@stripe/react-stripe-js"],
+			output: {
+				manualChunks: {
+					react: ["react", "react-dom"],
+					vendor: ["lodash", "axios"],
+				},
+			},
 		},
 	},
 });
