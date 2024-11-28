@@ -5,23 +5,22 @@ import path from "path";
 export default defineConfig({
 	plugins: [react()],
 	optimizeDeps: {
-		exclude: ["lucide-react"],
-		include: ["@stripe/react-stripe-js", "@stripe/stripe-js"],
+		exclude: ["lucide-react"], // Exclude these from optimization
+		include: ["@stripe/react-stripe-js", "@stripe/stripe-js"], // Pre-bundle these dependencies
 	},
 	resolve: {
 		alias: {
-			"@": path.resolve(__dirname, "./src"),
+			"@": path.resolve(__dirname, "./src"), // Path alias for cleaner imports
 		},
 	},
 	build: {
-		chunkSizeWarningLimit: 1200,
+		chunkSizeWarningLimit: 1200, // Increase chunk size limit to avoid warnings
 		rollupOptions: {
-			external: ["@stripe/react-stripe-js", "@stripe/stripe-js"],
+			external: ["@stripe/react-stripe-js", "@stripe/stripe-js"], // Ensure Stripe libraries are treated as external
 			output: {
 				manualChunks: {
-					react: ["react", "react-dom"],
-					vendor: ["lodash", "axios"],
-					stripe: ["@stripe/react-stripe-js", "@stripe/stripe-js"],
+					react: ["react", "react-dom"], // Group React libraries
+					vendor: ["lodash", "axios"], // Group vendor libraries
 				},
 			},
 		},
