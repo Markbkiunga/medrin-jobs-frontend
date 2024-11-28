@@ -115,11 +115,11 @@ const JobList = () => {
 					className='bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow'>
 					<div className='flex items-center justify-between'>
 						<div className='flex items-center space-x-4'>
-							<img
+							{/* <img
 								src={job.logo}
 								alt={job.company}
 								className='w-12 h-12 rounded-full'
-							/>
+							/> */}
 							<div>
 								<h3
 									className='text-lg font-semibold text-blue-600 cursor-pointer hover:underline'
