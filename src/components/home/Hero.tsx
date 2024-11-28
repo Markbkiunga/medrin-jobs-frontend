@@ -1,39 +1,41 @@
-// This is the first part of the of the landing page
-import { Search, MapPin } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { use } from 'framer-motion/client';
-import { useEffect, useState } from 'react';
-import Jobs from '../../pages/Jobs';
+/** @format */
 
+// This is the first part of the of the landing page
+import { Search, MapPin } from "lucide-react";
+import { motion } from "framer-motion";
+import { use } from "framer-motion/client";
+import { useEffect, useState } from "react";
+import Jobs from "../../pages/Jobs";
 
 const Hero = () => {
- const [jobs, setJobs] = useState<any[]>([]);
- const [loading, setLoading] = useState(false);
- const [searchTerm, setSearchTerm] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
-  const [jobsAmount, setJobsAmount] = useState(0);
+	const [jobs, setJobs] = useState<any[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [searchTerm, setSearchTerm] = useState<string>("");
+	const [location, setLocation] = useState<string>("");
+	const [jobsAmount, setJobsAmount] = useState(0);
 
-
-  useEffect(() => {
-    setLoading(true);
-    const fetchJobs = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/job");
-        const data = await response.json();
-        setJobsAmount(data.length || []);
-      } catch (error) {
-        console.error("Error fetching jobs data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchJobs()
-  }, []);
-  const searchJobs = async (query: string, location: string) => {
+	useEffect(() => {
+		setLoading(true);
+		const fetchJobs = async () => {
+			try {
+				const response = await fetch(
+					"https://medrin-jobs-backend-nn38.onrender.comcalhost:5000/job"
+				);
+				const data = await response.json();
+				setJobsAmount(data.length || []);
+			} catch (error) {
+				console.error("Error fetching jobs data:", error);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchJobs();
+	}, []);
+	const searchJobs = async (query: string, location: string) => {
 		setLoading(true);
 		try {
 			const response = await fetch(
-				`http://localhost:5000/job/search?query=${query}&location=${location}`
+				`https://medrin-jobs-backend-nn38.onrender.com/job/search?query=${query}&location=${location}`
 			);
 			const data = await response.json();
 			setJobs(data || []);
@@ -42,13 +44,13 @@ const Hero = () => {
 		} finally {
 			setLoading(false);
 		}
-  };
+	};
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		searchJobs(searchTerm, location);
-  };
-  return (
+	};
+	return (
 		<div className='bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20 md:py-32'>
 			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 				<div className='text-center mb-8 md:mb-12'>
@@ -57,7 +59,7 @@ const Hero = () => {
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.6 }}
 						className='text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6'>
-            There Are {jobsAmount } Postings Here For you!
+						There Are {jobsAmount} Postings Here For you!
 					</motion.h1>
 					<motion.p
 						initial={{ opacity: 0, y: 20 }}
@@ -153,7 +155,7 @@ const Hero = () => {
 				</div>
 			</div>
 		</div>
-  );
+	);
 };
 
 export default Hero;
