@@ -31,11 +31,11 @@ const JobDetails = ({ job, onClose, onApply }: JobDetailsProps) => {
 				<div className='p-6'>
 					{/* Header */}
 					<div className='flex items-center space-x-4 mb-6'>
-						<img
+						{/* <img
 							src={job.logo}
 							alt={job.company}
 							className='w-16 h-16 rounded-lg'
-						/>
+						/> */}
 						<div>
 							<h1 className='text-2xl font-bold text-gray-900'>
 								{job.title}
