@@ -10,7 +10,6 @@ interface PaymentResponse {
 	transactionId?: string;
 	clientSecret?: string;
 	accessToken?: string;
-	
 }
 
 class PaymentService {
@@ -21,7 +20,6 @@ class PaymentService {
 	}
 	private async getAccessToken(): Promise<string | null> {
 		if (this.accessToken) {
-			
 			return this.accessToken;
 		}
 
@@ -48,7 +46,6 @@ class PaymentService {
 			return { success: false, message: "Stripe not initialized" };
 		}
 		try {
-
 			const accessToken = await this.getAccessToken();
 
 			if (!accessToken) {
@@ -56,7 +53,7 @@ class PaymentService {
 			}
 			// Create payment intent
 			const response = await axios.post(
-				"http://127.0.0.1:5000/subscription/payment-intent",
+				"https://medrin-jobs-backend-nn38.onrender.com/subscription/payment-intent",
 				{ amount },
 				{
 					headers: {
@@ -70,7 +67,7 @@ class PaymentService {
 			const { id } = response.data;
 
 			const intentSuccess = await axios.post(
-				"http://127.0.0.1:5000/subscription/intent-success",
+				"https://medrin-jobs-backend-nn38.onrender.com/subscription/intent-success",
 				{ id },
 				{
 					headers: {
@@ -109,7 +106,7 @@ class PaymentService {
 		const accessToken = await this.getAccessToken();
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:5000/subscription/pay",
+				"https://medrin-jobs-backend-nn38.onrender.com/subscription/pay",
 				{
 					phoneNumber,
 					planName,
@@ -122,14 +119,11 @@ class PaymentService {
 				}
 			);
 
-
-
-	return {
-		success: true,
-		message: "M-Pesa STK push initiated. Please check your phone.",
-		transactionId: response.data.checkoutRequestID,
-	};
-
+			return {
+				success: true,
+				message: "M-Pesa STK push initiated. Please check your phone.",
+				transactionId: response.data.checkoutRequestID,
+			};
 		} catch (error) {
 			console.error(`M-Pesa payment failed:, ${error} ${accessToken}`);
 

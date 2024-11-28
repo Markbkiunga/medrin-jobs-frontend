@@ -16,8 +16,8 @@ import { RootState } from "../../redux";
 import axios from "axios";
 import { number } from "zod";
 const EmployerDashboard = () => {
-	  const [loading, setLoading] = useState(true);
-const navigate = useNavigate();
+	const [loading, setLoading] = useState(true);
+	const navigate = useNavigate();
 	const employerData = useSelector((state: RootState) => state.employer.data);
 	const [jobData, setJobData] = useState([]);
 	const dispatch = useDispatch();
@@ -33,19 +33,18 @@ const navigate = useNavigate();
 		const jobUpdates = async () => {
 			try {
 				const response = await axios.get(
-					"http://127.0.0.1:5000/job/getJobByUserId",
+					"https://medrin-jobs-backend-nn38.onrender.com/job/getJobByUserId",
 					{
 						headers: {
 							Authorization: `Bearer ${token}`,
 						},
 					}
 				);
-				
+
 				if (response.status === 200) {
 					setJobData(response.data);
-					
 				}
-				
+
 				console.log(response.data);
 			} catch (error) {
 				console.log("Error fetching job updates:", error);

@@ -34,29 +34,30 @@ const JobList = () => {
 	const [savedJobs, setSavedJobs] = useState<string[]>([]);
 
 	// Fetch jobs from the backend API
-useEffect(() => {
-	const fetchJobs = async () => {
-		setLoading(true);
-		try {
-			const response = await axios.get("http://127.0.0.1:5000/job"); 
-			console.log(response.data);
+	useEffect(() => {
+		const fetchJobs = async () => {
+			setLoading(true);
+			try {
+				const response = await axios.get(
+					"https://medrin-jobs-backend-nn38.onrender.com/job"
+				);
+				console.log(response.data);
 
-			const fetchedJobs = Array.isArray(response.data)
-				? response.data
-				: response.data.jobs;
-			setJobs(fetchedJobs);
-			setError(null);
-		} catch (err) {
-			console.error(err);
-			setError("Failed to load jobs. Please try again later.");
-		} finally {
-			setLoading(false);
-		}
-	};
+				const fetchedJobs = Array.isArray(response.data)
+					? response.data
+					: response.data.jobs;
+				setJobs(fetchedJobs);
+				setError(null);
+			} catch (err) {
+				console.error(err);
+				setError("Failed to load jobs. Please try again later.");
+			} finally {
+				setLoading(false);
+			}
+		};
 
-	fetchJobs();
-}, []);
-
+		fetchJobs();
+	}, []);
 
 	const toggleSaveJob = (jobId: string) => {
 		setSavedJobs((prev) =>
@@ -98,13 +99,13 @@ useEffect(() => {
 
 	if (error) {
 		return <div className='text-center text-red-600'>{error}</div>;
-  }
-    const formatSalary = (salary: number) => {
+	}
+	const formatSalary = (salary: number) => {
 		return (salary / 1000).toFixed(0) + "k";
-    };
-  const formatDateDistance = (date: string) => {
+	};
+	const formatDateDistance = (date: string) => {
 		return formatDistanceToNow(new Date(date)).replace(/^about\s/, "");
-  };
+	};
 
 	return (
 		<div className='space-y-6'>
