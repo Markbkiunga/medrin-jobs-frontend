@@ -2,10 +2,7 @@
 
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
-import type { StripeCardElement } from "@stripe/stripe-js";
-import { CardElement } from "@stripe/react-stripe-js";
 import { Stripe } from "@stripe/stripe-js";
-import { Bounce, toast } from "react-toastify";
 
 interface PaymentResponse {
 	success: boolean;
